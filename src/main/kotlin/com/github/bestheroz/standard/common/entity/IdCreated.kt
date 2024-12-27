@@ -5,53 +5,22 @@ import com.github.bestheroz.demo.entity.User
 import com.github.bestheroz.standard.common.dto.UserSimpleDto
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
-import jakarta.persistence.*
-import jakarta.persistence.Transient
-import org.hibernate.annotations.JoinColumnOrFormula
-import org.hibernate.annotations.JoinColumnsOrFormulas
-import org.hibernate.annotations.JoinFormula
 import java.time.Instant
 
-@MappedSuperclass
 abstract class IdCreated {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0
+    var id: Long? = null
 
-    @Column(nullable = false, updatable = false)
     lateinit var createdAt: Instant
 
-    @Column(nullable = false, updatable = false)
     lateinit var createdObjectType: UserTypeEnum
 
-    @Column(name = "created_object_id", nullable = false, updatable = false)
-    var createdObjectId: Long? = null
+    var createdObjectId: Long = 0L
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumnsOrFormulas(
-        JoinColumnOrFormula(
-            formula =
-                JoinFormula(
-                    value = "CASE WHEN created_object_type = 'ADMIN' THEN created_object_id ELSE null END",
-                    referencedColumnName = "id",
-                ),
-        ),
-    )
     var createdByAdmin: Admin? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumnsOrFormulas(
-        JoinColumnOrFormula(
-            formula =
-                JoinFormula(
-                    value = "CASE WHEN created_object_type = 'USER' THEN created_object_id ELSE null END",
-                    referencedColumnName = "id",
-                ),
-        ),
-    )
     var createdByUser: User? = null
 
-    @Transient var creator: Operator? = null
+    var creator: Operator? = null
 
     fun setCreatedBy(
         operator: Operator,
@@ -61,6 +30,16 @@ abstract class IdCreated {
         createdObjectId = operator.id
         createdObjectType = operator.type
         creator = operator
+        when (operator.type) {
+            UserTypeEnum.ADMIN -> {
+                createdByAdmin = Admin.of(operator)
+                createdByUser = null
+            }
+            UserTypeEnum.USER -> {
+                createdByAdmin = null
+                createdByUser = User.of(operator)
+            }
+        }
     }
 
     val createdBy: UserSimpleDto

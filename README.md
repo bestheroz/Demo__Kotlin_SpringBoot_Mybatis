@@ -1,4 +1,4 @@
-# Demo__Kotlin_SpringBoot
+# Demo__Kotlin_SpringBoot_Mybatis
 
 > 최신 트렌드를 학습/추적/테스트하기 위한 개인 프로젝트입니다.
 >
@@ -6,7 +6,7 @@
 
 ![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
-![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![MyBatis](https://img.shields.io/badge/MyBatis-%23008098.svg?style=for-the-badge&logo=MyBatis&logoColor=white)
 ![Gradle](https://img.shields.io/badge/gradle-%2302303A.svg?style=for-the-badge&logo=gradle&logoColor=white)
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
 ![Docker](https://img.shields.io/badge/-Docker-%232496ED?style=for-the-badge&logo=docker&logoColor=white)

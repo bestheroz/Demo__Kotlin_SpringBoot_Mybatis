@@ -1,36 +1,26 @@
 package com.github.bestheroz.demo.entity
 
 import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
-import com.github.bestheroz.standard.common.entity.converter.JsonAttributeConverter
 import com.github.bestheroz.standard.common.enums.AuthorityEnum
-import com.github.bestheroz.standard.common.enums.AuthorityEnum.AuthorityEnumListConverter
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.PasswordUtil.getPasswordHash
-import jakarta.persistence.Column
-import jakarta.persistence.Convert
-import jakarta.persistence.DiscriminatorValue
-import jakarta.persistence.Entity
+import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity(name = "users")
-@DiscriminatorValue("users")
+@Table(name = "users")
 data class User(
-    @Column(nullable = false) var loginId: String = "",
+    var loginId: String = "",
     var password: String? = null,
     var token: String? = null,
-    @Column(nullable = false) var name: String = "",
-    @Column(nullable = false) var useFlag: Boolean = false,
-    @Convert(converter = AuthorityEnumListConverter::class)
-    @Column(columnDefinition = "json", nullable = false)
+    var name: String = "",
+    var useFlag: Boolean = false,
     var authorities: List<AuthorityEnum> = mutableListOf(),
     var changePasswordAt: Instant? = null,
     var latestActiveAt: Instant? = null,
     var joinedAt: Instant? = null,
-    @Convert(converter = JsonAttributeConverter::class)
-    @Column(columnDefinition = "json", nullable = false)
     var additionalInfo: Map<String, Any> = mutableMapOf(),
-    @Column(nullable = false) var removedFlag: Boolean = false,
+    var removedFlag: Boolean = false,
     var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
     fun getType(): UserTypeEnum = UserTypeEnum.USER

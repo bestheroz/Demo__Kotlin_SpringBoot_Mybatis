@@ -5,37 +5,25 @@ import com.github.bestheroz.standard.common.enums.AuthorityEnum
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.PasswordUtil.getPasswordHash
-import jakarta.persistence.Column
-import jakarta.persistence.Convert
-import jakarta.persistence.DiscriminatorValue
-import jakarta.persistence.Entity
+import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity(name = "admins")
-@DiscriminatorValue("admins")
+@Table(name = "admins")
 data class Admin(
-    @Column(nullable = false) var loginId: String = "",
+    var loginId: String = "",
     var password: String? = null,
     var token: String? = null,
-    @Column(nullable = false) var name: String = "",
-    @Column(nullable = false) var useFlag: Boolean = false,
-    @Column(nullable = false) var managerFlag: Boolean = false,
-    @Convert(converter = AuthorityEnum.AuthorityEnumListConverter::class)
-    @Column(name = "authorities", columnDefinition = "json", nullable = false)
-    var _authorities: List<AuthorityEnum> = mutableListOf(),
+    var name: String = "",
+    var useFlag: Boolean = false,
+    var managerFlag: Boolean = false,
+    var authorities: List<AuthorityEnum> = mutableListOf(),
     var changePasswordAt: Instant? = null,
     var latestActiveAt: Instant? = null,
     var joinedAt: Instant? = null,
-    @Column(nullable = false) var removedFlag: Boolean = false,
+    var removedFlag: Boolean = false,
     var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
     fun getType(): UserTypeEnum = UserTypeEnum.ADMIN
-
-    var authorities: List<AuthorityEnum>
-        get() = if (managerFlag) AuthorityEnum.entries else _authorities
-        set(value) {
-            _authorities = value
-        }
 
     companion object {
         fun of(
@@ -51,7 +39,7 @@ data class Admin(
             name = name,
             useFlag = useFlag,
             managerFlag = managerFlag,
-            _authorities = authorities,
+            authorities = authorities,
         ).apply {
             this.password = getPasswordHash(password)
             val now = Instant.now()
@@ -67,7 +55,7 @@ data class Admin(
                 name = operator.name,
                 useFlag = false,
                 managerFlag = operator.managerFlag,
-                _authorities = emptyList(),
+                authorities = emptyList(),
             ).apply { this.id = operator.id }
     }
 

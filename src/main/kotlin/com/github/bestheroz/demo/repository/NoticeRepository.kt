@@ -1,12 +1,9 @@
 package com.github.bestheroz.demo.repository
 
 import com.github.bestheroz.demo.entity.Notice
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.JpaRepository
+import com.github.bestheroz.standard.common.mybatis.SqlRepository
+import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
-@Repository
-interface NoticeRepository : JpaRepository<Notice, Long> {
-    fun findAllByRemovedFlagIsFalse(pageable: Pageable): Page<Notice>
-}
+@Mapper @Repository
+interface NoticeRepository : SqlRepository<Notice>

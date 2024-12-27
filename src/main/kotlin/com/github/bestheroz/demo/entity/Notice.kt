@@ -2,16 +2,15 @@ package com.github.bestheroz.demo.entity
 
 import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
 import com.github.bestheroz.standard.common.security.Operator
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
+import jakarta.persistence.Table
 import java.time.Instant
 
-@Entity(name = "notices")
+@Table(name = "notices")
 data class Notice(
-    @Column(nullable = false) var title: String = "",
-    @Column(nullable = false) var content: String = "",
-    @Column(nullable = false) var useFlag: Boolean = false,
-    @Column(nullable = false) var removedFlag: Boolean = false,
+    var title: String = "",
+    var content: String = "",
+    var useFlag: Boolean = false,
+    var removedFlag: Boolean = false,
     private var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
     companion object {

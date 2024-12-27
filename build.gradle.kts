@@ -49,13 +49,15 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.aspectj:aspectjweaver")
     implementation("org.apache.commons:commons-lang3")
 
     // Database
     implementation("com.mysql:mysql-connector-j:9.1.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+    implementation("org.hibernate.orm:hibernate-core:7.0.0.Beta3")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.4.0")

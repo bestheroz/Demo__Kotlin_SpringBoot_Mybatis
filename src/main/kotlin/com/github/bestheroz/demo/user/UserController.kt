@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -75,7 +76,7 @@ class UserController(
         @PathVariable id: Long,
         @RequestBody request: UserUpdateDto.Request,
         @CurrentUser operator: Operator,
-    ): UserDto.Response = userService.updateUser(id, request, operator)
+    ): UserDto.Response = runBlocking { userService.updateUser(id, request, operator) }
 
     @PatchMapping("{id}/password")
     @Operation(summary = "유저 비밀번호 변경")

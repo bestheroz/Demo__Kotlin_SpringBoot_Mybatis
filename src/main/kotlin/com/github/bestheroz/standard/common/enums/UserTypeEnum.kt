@@ -1,15 +1,11 @@
 package com.github.bestheroz.standard.common.enums
 
-import com.github.bestheroz.standard.common.entity.converter.GenericEnumConverter
-import jakarta.persistence.Converter
-
 enum class UserTypeEnum(
     private val value: String,
-) {
+) : ValueEnum {
     ADMIN("ADMIN"),
     USER("USER"),
     ;
 
-    @Converter(autoApply = true)
-    class EnumConverter : GenericEnumConverter<UserTypeEnum>(UserTypeEnum::class.java)
+    override fun getValue(): String = value
 }
