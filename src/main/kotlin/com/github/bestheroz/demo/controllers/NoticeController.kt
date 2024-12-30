@@ -1,5 +1,8 @@
-package com.github.bestheroz.demo.notice
+package com.github.bestheroz.demo.controllers
 
+import com.github.bestheroz.demo.dtos.notice.NoticeCreateDto
+import com.github.bestheroz.demo.dtos.notice.NoticeDto
+import com.github.bestheroz.demo.services.NoticeService
 import com.github.bestheroz.standard.common.authenticate.CurrentUser
 import com.github.bestheroz.standard.common.dto.ListResult
 import com.github.bestheroz.standard.common.security.Operator

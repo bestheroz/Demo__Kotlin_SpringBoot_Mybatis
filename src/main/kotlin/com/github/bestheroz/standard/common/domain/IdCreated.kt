@@ -1,7 +1,7 @@
-package com.github.bestheroz.standard.common.entity
+package com.github.bestheroz.standard.common.domain
 
-import com.github.bestheroz.demo.entity.Admin
-import com.github.bestheroz.demo.entity.User
+import com.github.bestheroz.demo.domain.Admin
+import com.github.bestheroz.demo.domain.User
 import com.github.bestheroz.standard.common.dto.UserSimpleDto
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator

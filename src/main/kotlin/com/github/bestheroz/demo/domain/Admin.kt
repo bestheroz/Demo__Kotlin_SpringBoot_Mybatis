@@ -1,6 +1,6 @@
-package com.github.bestheroz.demo.entity
+package com.github.bestheroz.demo.domain
 
-import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
+import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.enums.AuthorityEnum
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
@@ -8,22 +8,22 @@ import com.github.bestheroz.standard.common.util.PasswordUtil.getPasswordHash
 import jakarta.persistence.Table
 import java.time.Instant
 
-@Table(name = "users")
-data class User(
+@Table(name = "admins")
+data class Admin(
     var loginId: String = "",
     var password: String? = null,
     var token: String? = null,
     var name: String = "",
     var useFlag: Boolean = false,
+    var managerFlag: Boolean = false,
     var authorities: List<AuthorityEnum> = mutableListOf(),
     var changePasswordAt: Instant? = null,
     var latestActiveAt: Instant? = null,
     var joinedAt: Instant? = null,
-    var additionalInfo: Map<String, Any> = mutableMapOf(),
     var removedFlag: Boolean = false,
     var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
-    fun getType(): UserTypeEnum = UserTypeEnum.USER
+    fun getType(): UserTypeEnum = UserTypeEnum.ADMIN
 
     companion object {
         fun of(
@@ -31,17 +31,18 @@ data class User(
             password: String,
             name: String,
             useFlag: Boolean,
+            managerFlag: Boolean,
             authorities: List<AuthorityEnum>,
             operator: Operator,
-        ) = User(
+        ) = Admin(
             loginId = loginId,
             name = name,
             useFlag = useFlag,
+            managerFlag = managerFlag,
             authorities = authorities,
-            additionalInfo = mapOf(),
         ).apply {
-            val now = Instant.now()
             this.password = getPasswordHash(password)
+            val now = Instant.now()
             this.joinedAt = now
             this.removedFlag = false
             this.setCreatedBy(operator, now)
@@ -49,12 +50,12 @@ data class User(
         }
 
         fun of(operator: Operator) =
-            User(
+            Admin(
                 loginId = operator.loginId,
                 name = operator.name,
                 useFlag = false,
-                authorities = listOf(),
-                additionalInfo = mapOf(),
+                managerFlag = operator.managerFlag,
+                authorities = emptyList(),
             ).apply { this.id = operator.id }
     }
 
@@ -63,17 +64,19 @@ data class User(
         password: String?,
         name: String,
         useFlag: Boolean,
+        managerFlag: Boolean,
         authorities: List<AuthorityEnum>,
         operator: Operator,
     ) {
         this.loginId = loginId
         this.name = name
         this.useFlag = useFlag
+        this.managerFlag = managerFlag
         this.authorities = authorities
         val now = Instant.now()
-        this.setUpdatedBy(operator, now)
+        setUpdatedBy(operator, now)
         password?.let {
-            this.password = getPasswordHash(it)
+            this.password = getPasswordHash(password)
             this.changePasswordAt = now
         }
     }
@@ -85,22 +88,22 @@ data class User(
         this.password = getPasswordHash(password)
         val now = Instant.now()
         this.changePasswordAt = now
-        this.setUpdatedBy(operator, now)
+        setUpdatedBy(operator, now)
     }
 
     fun remove(operator: Operator) {
-        this.removedFlag = true
+        removedFlag = true
         val now = Instant.now()
-        this.removedAt = now
-        this.setUpdatedBy(operator, now)
+        removedAt = now
+        setUpdatedBy(operator, now)
     }
 
-    fun renewToken(token: String?) {
+    fun renewToken(token: String) {
         this.token = token
-        this.latestActiveAt = Instant.now()
+        latestActiveAt = Instant.now()
     }
 
     fun logout() {
-        this.token = null
+        token = null
     }
 }

@@ -1,13 +1,13 @@
-package com.github.bestheroz.demo.admin
+package com.github.bestheroz.demo.dtos.user
 
-import com.github.bestheroz.demo.entity.Admin
+import com.github.bestheroz.demo.domain.User
 import com.github.bestheroz.standard.common.dto.IdCreatedUpdatedDto
 import com.github.bestheroz.standard.common.dto.UserSimpleDto
 import com.github.bestheroz.standard.common.enums.AuthorityEnum
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.Instant
 
-class AdminDto {
+class UserDto {
     data class Request(
         @Schema(description = "페이지 번호", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
         val page: Int,
@@ -18,11 +18,9 @@ class AdminDto {
     data class Response(
         @Schema(description = "로그인 아이디", requiredMode = Schema.RequiredMode.REQUIRED)
         val loginId: String,
-        @Schema(description = "관리자 이름", requiredMode = Schema.RequiredMode.REQUIRED) val name: String,
+        @Schema(description = "유저 이름", requiredMode = Schema.RequiredMode.REQUIRED) val name: String,
         @Schema(description = "사용 여부", requiredMode = Schema.RequiredMode.REQUIRED)
         val useFlag: Boolean,
-        @Schema(description = "매니저 여부(모든 권한 소유)", requiredMode = Schema.RequiredMode.REQUIRED)
-        val managerFlag: Boolean,
         @Schema(description = "권한 목록", requiredMode = Schema.RequiredMode.REQUIRED)
         val authorities: List<AuthorityEnum>,
         @Schema(description = "가입 일시", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
@@ -43,21 +41,20 @@ class AdminDto {
         override val updatedBy: UserSimpleDto,
     ) : IdCreatedUpdatedDto(id, createdAt, createdBy, updatedAt, updatedBy) {
         companion object {
-            fun of(admin: Admin): Response =
+            fun of(user: User): Response =
                 Response(
-                    id = admin.id!!,
-                    loginId = admin.loginId,
-                    name = admin.name,
-                    useFlag = admin.useFlag,
-                    managerFlag = admin.managerFlag,
-                    authorities = admin.authorities,
-                    joinedAt = admin.joinedAt,
-                    latestActiveAt = admin.latestActiveAt,
-                    changePasswordAt = admin.changePasswordAt,
-                    createdAt = admin.createdAt,
-                    createdBy = admin.createdBy,
-                    updatedAt = admin.updatedAt,
-                    updatedBy = admin.updatedBy,
+                    id = user.id!!,
+                    loginId = user.loginId,
+                    name = user.name,
+                    useFlag = user.useFlag,
+                    authorities = user.authorities,
+                    joinedAt = user.joinedAt,
+                    latestActiveAt = user.latestActiveAt,
+                    changePasswordAt = user.changePasswordAt,
+                    createdAt = user.createdAt,
+                    createdBy = user.createdBy,
+                    updatedAt = user.updatedAt,
+                    updatedBy = user.updatedBy,
                 )
         }
     }

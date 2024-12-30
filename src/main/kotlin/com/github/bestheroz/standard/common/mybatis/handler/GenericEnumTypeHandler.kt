@@ -1,63 +1,72 @@
-package com.github.bestheroz.standard.common.mybatis.handler;
+package com.github.bestheroz.standard.common.mybatis.handler
 
-import com.github.bestheroz.standard.common.enums.ValueEnum;
-import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.JdbcType;
+import com.github.bestheroz.standard.common.enums.ValueEnum
+import org.apache.ibatis.type.BaseTypeHandler
+import org.apache.ibatis.type.JdbcType
+import java.sql.CallableStatement
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.SQLException
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-public class GenericEnumTypeHandler<E extends ValueEnum> extends BaseTypeHandler<E> {
-
-  private final Class<E> type;
-
-  public GenericEnumTypeHandler(Class<E> type) {
-    if (type == null) throw new IllegalArgumentException("Type argument cannot be null");
-    this.type = type;
-  }
-
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
-      throws SQLException {
-    if (parameter == null) {
-      ps.setNull(i, jdbcType.TYPE_CODE);
-    } else {
-      ps.setString(i, parameter.value);
+class GenericEnumTypeHandler<E : ValueEnum>(
+    private val type: Class<E>?,
+) : BaseTypeHandler<E>() {
+    init {
+        requireNotNull(type) { "Type argument cannot be null" }
     }
-  }
 
-  @Override
-  public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    String value = rs.getString(columnName);
-    return getEnum(value);
-  }
-
-  @Override
-  public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    String value = rs.getString(columnIndex);
-    return getEnum(value);
-  }
-
-  @Override
-  public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    String value = cs.getString(columnIndex);
-    return getEnum(value);
-  }
-
-  private E getEnum(String value) throws SQLException {
-    if (value == null) return null;
-    try {
-      for (E enumConstant : type.getEnumConstants()) {
-        if (enumConstant.value.equals(value)) {
-          return enumConstant;
+    override fun setNonNullParameter(
+        ps: PreparedStatement,
+        i: Int,
+        parameter: E,
+        jdbcType: JdbcType?,
+    ) {
+        if (parameter == null) {
+            // jdbcType?.TYPE_CODE가 null이면 기본값 0 지정
+            ps.setNull(i, jdbcType?.TYPE_CODE ?: 0)
+        } else {
+            ps.setString(i, parameter.getValue())
         }
-      }
-      throw new IllegalArgumentException("Unknown enum value: " + value);
-    } catch (Exception e) {
-      throw new SQLException(
-          "Cannot convert " + value + " to " + type.getSimpleName() + " by name.", e);
     }
-  }
+
+    override fun getNullableResult(
+        rs: ResultSet,
+        columnName: String?,
+    ): E? {
+        val value = rs.getString(columnName)
+        return getEnum(value)
+    }
+
+    override fun getNullableResult(
+        rs: ResultSet,
+        columnIndex: Int,
+    ): E? {
+        val value = rs.getString(columnIndex)
+        return getEnum(value)
+    }
+
+    override fun getNullableResult(
+        cs: CallableStatement,
+        columnIndex: Int,
+    ): E? {
+        val value = cs.getString(columnIndex)
+        return getEnum(value)
+    }
+
+    @Throws(SQLException::class)
+    private fun getEnum(value: String?): E? {
+        if (value == null) {
+            return null
+        }
+        return try {
+            for (enumConstant in type!!.enumConstants) {
+                if (enumConstant.getValue() == value) {
+                    return enumConstant
+                }
+            }
+            throw IllegalArgumentException("Unknown enum value: $value")
+        } catch (e: Exception) {
+            throw SQLException("Cannot convert $value to ${type?.simpleName} by name.", e)
+        }
+    }
 }

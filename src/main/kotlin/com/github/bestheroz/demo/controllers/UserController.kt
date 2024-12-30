@@ -1,5 +1,11 @@
-package com.github.bestheroz.demo.user
+package com.github.bestheroz.demo.controllers
 
+import com.github.bestheroz.demo.dtos.user.UserChangePasswordDto
+import com.github.bestheroz.demo.dtos.user.UserCreateDto
+import com.github.bestheroz.demo.dtos.user.UserDto
+import com.github.bestheroz.demo.dtos.user.UserLoginDto
+import com.github.bestheroz.demo.dtos.user.UserUpdateDto
+import com.github.bestheroz.demo.services.UserService
 import com.github.bestheroz.standard.common.authenticate.CurrentUser
 import com.github.bestheroz.standard.common.dto.ListResult
 import com.github.bestheroz.standard.common.dto.TokenDto

@@ -1,8 +1,8 @@
-package com.github.bestheroz.demo.user
+package com.github.bestheroz.demo.dtos.admin
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-class UserLoginDto {
+class AdminLoginDto {
     data class Request(
         @Schema(description = "로그인 아이디", requiredMode = Schema.RequiredMode.REQUIRED)
         val loginId: String,

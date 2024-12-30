@@ -1,11 +1,11 @@
-package com.github.bestheroz.demo.entity.service
+package com.github.bestheroz.demo.domain.service
 
-import com.github.bestheroz.demo.entity.Admin
-import com.github.bestheroz.demo.entity.User
+import com.github.bestheroz.demo.domain.Admin
+import com.github.bestheroz.demo.domain.User
 import com.github.bestheroz.demo.repository.AdminRepository
 import com.github.bestheroz.demo.repository.UserRepository
-import com.github.bestheroz.standard.common.entity.IdCreated
-import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
+import com.github.bestheroz.standard.common.domain.IdCreated
+import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import org.springframework.stereotype.Component
 

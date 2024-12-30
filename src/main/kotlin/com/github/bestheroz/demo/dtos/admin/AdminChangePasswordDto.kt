@@ -1,4 +1,4 @@
-package com.github.bestheroz.demo.admin
+package com.github.bestheroz.demo.dtos.admin
 
 import io.swagger.v3.oas.annotations.media.Schema
 

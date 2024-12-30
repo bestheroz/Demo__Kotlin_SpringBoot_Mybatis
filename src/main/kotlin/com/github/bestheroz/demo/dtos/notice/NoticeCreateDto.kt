@@ -1,6 +1,6 @@
-package com.github.bestheroz.demo.notice
+package com.github.bestheroz.demo.dtos.notice
 
-import com.github.bestheroz.demo.entity.Notice
+import com.github.bestheroz.demo.domain.Notice
 import com.github.bestheroz.standard.common.security.Operator
 import io.swagger.v3.oas.annotations.media.Schema
 

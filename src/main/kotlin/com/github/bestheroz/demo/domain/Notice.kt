@@ -1,6 +1,6 @@
-package com.github.bestheroz.demo.entity
+package com.github.bestheroz.demo.domain
 
-import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
+import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.security.Operator
 import jakarta.persistence.Table
 import java.time.Instant

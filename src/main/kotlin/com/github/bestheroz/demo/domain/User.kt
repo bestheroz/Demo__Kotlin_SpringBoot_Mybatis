@@ -1,6 +1,6 @@
-package com.github.bestheroz.demo.entity
+package com.github.bestheroz.demo.domain
 
-import com.github.bestheroz.standard.common.entity.IdCreatedUpdated
+import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.enums.AuthorityEnum
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
@@ -8,22 +8,22 @@ import com.github.bestheroz.standard.common.util.PasswordUtil.getPasswordHash
 import jakarta.persistence.Table
 import java.time.Instant
 
-@Table(name = "admins")
-data class Admin(
+@Table(name = "users")
+data class User(
     var loginId: String = "",
     var password: String? = null,
     var token: String? = null,
     var name: String = "",
     var useFlag: Boolean = false,
-    var managerFlag: Boolean = false,
     var authorities: List<AuthorityEnum> = mutableListOf(),
     var changePasswordAt: Instant? = null,
     var latestActiveAt: Instant? = null,
     var joinedAt: Instant? = null,
+    var additionalInfo: Map<String, Any> = mutableMapOf(),
     var removedFlag: Boolean = false,
     var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
-    fun getType(): UserTypeEnum = UserTypeEnum.ADMIN
+    fun getType(): UserTypeEnum = UserTypeEnum.USER
 
     companion object {
         fun of(
@@ -31,18 +31,17 @@ data class Admin(
             password: String,
             name: String,
             useFlag: Boolean,
-            managerFlag: Boolean,
             authorities: List<AuthorityEnum>,
             operator: Operator,
-        ) = Admin(
+        ) = User(
             loginId = loginId,
             name = name,
             useFlag = useFlag,
-            managerFlag = managerFlag,
             authorities = authorities,
+            additionalInfo = mapOf(),
         ).apply {
-            this.password = getPasswordHash(password)
             val now = Instant.now()
+            this.password = getPasswordHash(password)
             this.joinedAt = now
             this.removedFlag = false
             this.setCreatedBy(operator, now)
@@ -50,12 +49,12 @@ data class Admin(
         }
 
         fun of(operator: Operator) =
-            Admin(
+            User(
                 loginId = operator.loginId,
                 name = operator.name,
                 useFlag = false,
-                managerFlag = operator.managerFlag,
-                authorities = emptyList(),
+                authorities = listOf(),
+                additionalInfo = mapOf(),
             ).apply { this.id = operator.id }
     }
 
@@ -64,19 +63,17 @@ data class Admin(
         password: String?,
         name: String,
         useFlag: Boolean,
-        managerFlag: Boolean,
         authorities: List<AuthorityEnum>,
         operator: Operator,
     ) {
         this.loginId = loginId
         this.name = name
         this.useFlag = useFlag
-        this.managerFlag = managerFlag
         this.authorities = authorities
         val now = Instant.now()
-        setUpdatedBy(operator, now)
+        this.setUpdatedBy(operator, now)
         password?.let {
-            this.password = getPasswordHash(password)
+            this.password = getPasswordHash(it)
             this.changePasswordAt = now
         }
     }
@@ -88,22 +85,22 @@ data class Admin(
         this.password = getPasswordHash(password)
         val now = Instant.now()
         this.changePasswordAt = now
-        setUpdatedBy(operator, now)
+        this.setUpdatedBy(operator, now)
     }
 
     fun remove(operator: Operator) {
-        removedFlag = true
+        this.removedFlag = true
         val now = Instant.now()
-        removedAt = now
-        setUpdatedBy(operator, now)
+        this.removedAt = now
+        this.setUpdatedBy(operator, now)
     }
 
-    fun renewToken(token: String) {
+    fun renewToken(token: String?) {
         this.token = token
-        latestActiveAt = Instant.now()
+        this.latestActiveAt = Instant.now()
     }
 
     fun logout() {
-        token = null
+        this.token = null
     }
 }

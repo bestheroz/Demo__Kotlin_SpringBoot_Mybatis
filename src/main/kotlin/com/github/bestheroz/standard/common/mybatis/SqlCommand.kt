@@ -53,7 +53,7 @@ class SqlCommand {
                 getAllFields(source::class.java).forEach { field ->
                     field.isAccessible = true
                     try {
-                        put(field.name, field.get(source))
+                        field.get(source)?.let { put(field.name, it) }
                     } catch (e: Exception) {
                         log.warn(e.stackTraceToString())
                     }
