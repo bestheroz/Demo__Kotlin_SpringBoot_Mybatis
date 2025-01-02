@@ -13,14 +13,38 @@ import java.time.format.DateTimeFormatter
 class SqlCommand {
     companion object {
         val log = logger()
-        const val SELECT_ITEMS = "getDistinctAndTargetItemsByMapOrderByLimitOffset"
-        const val SELECT_ITEM_BY_MAP = "getItemByMap"
+        const val COUNT_ALL = "countAll"
         const val COUNT_BY_MAP = "countByMap"
-        const val COUNT_BY_DATATABLE = "countForDataTable"
+        const val SELECT_ITEMS = "getItems"
+        const val SELECT_ITEMS_LIMIT_OFFSET = "getItemsLimitOffset"
+        const val SELECT_ITEMS_ORDER_BY = "getItemsOrderBy"
+        const val SELECT_ITEMS_ORDER_BY_LIMIT_OFFSET = "getItemsOrderByLimitOffset"
+        const val SELECT_ITEMS_BY_MAP = "getItemsByMap"
+        const val SELECT_ITEMS_BY_MAP_LIMIT_OFFSET = "getItemsByMapLimitOffset"
+        const val SELECT_ITEMS_BY_MAP_ODER_BY = "getItemsByMapOrderBy"
+        const val SELECT_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET = "getItemsByMapOrderByLimitOffset"
+        const val SELECT_DISTINCT_ITEMS = "getDistinctItems"
+        const val SELECT_TARGET_ITEMS = "getTargetItems"
+        const val SELECT_TARGET_ITEMS_LIMIT_OFFSET = "getTargetItemsLimitOffset"
+        const val SELECT_TARGET_ITEMS_ORDER_BY = "getTargetItemsOrderBy"
+        const val SELECT_TARGET_ITEMS_ORDER_BY_LIMIT_OFFSET = "getTargetItemsOrderByLimitOffset"
+        const val SELECT_TARGET_ITEMS_BY_MAP = "getTargetItemsByMap"
+        const val SELECT_TARGET_ITEMS_BY_MAP_LIMIT_OFFSET = "getTargetItemsByMapLimitOffset"
+        const val SELECT_TARGET_ITEMS_BY_MAP_ODER_BY = "getTargetItemsByMapOrderBy"
+        const val SELECT_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET =
+            "getTargetItemsByMapOrderByLimitOffset"
+        const val SELECT_DISTINCT_AND_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET =
+            "getDistinctAndTargetItemsByMapOrderByLimitOffset"
+        const val SELECT_ITEM_BY_MAP = "getItemByMap"
+        const val SELECT_ITEM_BY_ID = "getItemById"
         const val INSERT = "insert"
         const val INSERT_BATCH = "insertBatch"
+        const val UPDATE_BY_ID = "updateById"
+        const val UPDATE_BY_MAP = "updateByMap"
+        const val UPDATE_MAP_BY_ID = "updateMapById"
         const val UPDATE_MAP_BY_MAP = "updateMapByMap"
         const val DELETE_BY_MAP = "deleteByMap"
+        const val DELETE_BY_ID = "deleteById"
 
         private val EXCLUDE_FIELD_SET =
             setOf(
@@ -38,14 +62,36 @@ class SqlCommand {
 
         private val METHOD_LIST =
             setOf(
-                SELECT_ITEMS,
-                SELECT_ITEM_BY_MAP,
+                COUNT_ALL,
                 COUNT_BY_MAP,
-                COUNT_BY_DATATABLE,
+                SELECT_ITEMS,
+                SELECT_ITEMS_LIMIT_OFFSET,
+                SELECT_ITEMS_ORDER_BY,
+                SELECT_ITEMS_ORDER_BY_LIMIT_OFFSET,
+                SELECT_ITEMS_BY_MAP,
+                SELECT_ITEMS_BY_MAP_LIMIT_OFFSET,
+                SELECT_ITEMS_BY_MAP_ODER_BY,
+                SELECT_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+                SELECT_DISTINCT_ITEMS,
+                SELECT_TARGET_ITEMS,
+                SELECT_TARGET_ITEMS_LIMIT_OFFSET,
+                SELECT_TARGET_ITEMS_ORDER_BY,
+                SELECT_TARGET_ITEMS_ORDER_BY_LIMIT_OFFSET,
+                SELECT_TARGET_ITEMS_BY_MAP,
+                SELECT_TARGET_ITEMS_BY_MAP_LIMIT_OFFSET,
+                SELECT_TARGET_ITEMS_BY_MAP_ODER_BY,
+                SELECT_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+                SELECT_DISTINCT_AND_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+                SELECT_ITEM_BY_MAP,
+                SELECT_ITEM_BY_ID,
                 INSERT,
                 INSERT_BATCH,
+                UPDATE_BY_ID,
+                UPDATE_BY_MAP,
+                UPDATE_MAP_BY_ID,
                 UPDATE_MAP_BY_MAP,
                 DELETE_BY_MAP,
+                DELETE_BY_ID,
             )
 
         fun toMap(source: Any): Map<String, Any> =
@@ -98,6 +144,8 @@ class SqlCommand {
         }
     }
 
+    fun countAll(): String = countByMap(emptyMap())
+
     fun countByMap(whereConditions: Map<String, Any>): String =
         SQL()
             .apply {
@@ -148,6 +196,225 @@ class SqlCommand {
             .distinct()
             .filter { !EXCLUDE_FIELD_SET.contains(it) }
             .toSet()
+
+    fun getItems(): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = emptyMap(),
+            orderByConditions = emptyList(),
+            limit = null,
+            offset = null,
+        )
+
+    fun getItemsLimitOffset(
+        limit: Int,
+        offset: Int,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = emptyMap(),
+            orderByConditions = emptyList(),
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getItemsOrderBy(orderByConditions: List<String>): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = emptyMap(),
+            orderByConditions = orderByConditions,
+            limit = null,
+            offset = null,
+        )
+
+    fun getItemsOrderByLimitOffset(
+        orderByConditions: List<String>,
+        limit: Int,
+        offset: Int,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = emptyMap(),
+            orderByConditions = orderByConditions,
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getItemsByMap(whereConditions: Map<String, Any>): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = whereConditions,
+            orderByConditions = emptyList(),
+            limit = null,
+            offset = null,
+        )
+
+    fun getItemsByMapLimitOffset(
+        whereConditions: Map<String, Any>,
+        limit: Int?,
+        offset: Int?,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = whereConditions,
+            orderByConditions = emptyList(),
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getItemsByMapOrderBy(
+        whereConditions: Map<String, Any>,
+        orderByConditions: List<String>,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = whereConditions,
+            orderByConditions = orderByConditions,
+            limit = null,
+            offset = null,
+        )
+
+    fun getItemsByMapOrderByLimitOffset(
+        whereConditions: Map<String, Any>,
+        orderByConditions: List<String>,
+        limit: Int,
+        offset: Int,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = emptySet(),
+            whereConditions = whereConditions,
+            orderByConditions = orderByConditions,
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getDistinctItems(distinctColumns: Set<String>): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = distinctColumns,
+            targetColumns = emptySet(),
+            whereConditions = emptyMap(),
+            orderByConditions = emptyList(),
+            limit = null,
+            offset = null,
+        )
+
+    fun getTargetItems(targetColumns: Set<String>): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = emptyMap(),
+            orderByConditions = emptyList(),
+            limit = null,
+            offset = null,
+        )
+
+    fun getTargetItemsLimitOffset(
+        targetColumns: Set<String>,
+        limit: Int?,
+        offset: Int?,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = emptyMap(),
+            orderByConditions = emptyList(),
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getTargetItemsOrderBy(
+        targetColumns: Set<String>,
+        orderByConditions: List<String>,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = emptyMap(),
+            orderByConditions = orderByConditions,
+            limit = null,
+            offset = null,
+        )
+
+    fun getTargetItemsOrderByLimitOffset(
+        targetColumns: Set<String>,
+        orderByConditions: List<String>,
+        limit: Int?,
+        offset: Int?,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = emptyMap(),
+            orderByConditions = orderByConditions,
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getTargetItemsByMap(
+        targetColumns: Set<String>,
+        whereConditions: Map<String, Any>,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = whereConditions,
+            orderByConditions = emptyList(),
+            limit = null,
+            offset = null,
+        )
+
+    fun getTargetItemsByMapLimitOffset(
+        targetColumns: Set<String>,
+        whereConditions: Map<String, Any>,
+        limit: Int?,
+        offset: Int?,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = whereConditions,
+            orderByConditions = emptyList(),
+            limit = limit,
+            offset = offset,
+        )
+
+    fun getTargetItemsByMapOrderBy(
+        targetColumns: Set<String>,
+        whereConditions: Map<String, Any>,
+        orderByConditions: List<String>,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = whereConditions,
+            orderByConditions = orderByConditions,
+            limit = null,
+            offset = null,
+        )
+
+    fun getTargetItemsByMapOrderByLimitOffset(
+        targetColumns: Set<String>,
+        whereConditions: Map<String, Any>,
+        orderByConditions: List<String>,
+        limit: Int?,
+        offset: Int?,
+    ): String =
+        getDistinctAndTargetItemsByMapOrderByLimitOffset(
+            distinctColumns = emptySet(),
+            targetColumns = targetColumns,
+            whereConditions = whereConditions,
+            orderByConditions = orderByConditions,
+            limit = limit,
+            offset = offset,
+        )
 
     fun getDistinctAndTargetItemsByMapOrderByLimitOffset(
         distinctColumns: Set<String>,
@@ -203,6 +470,8 @@ class SqlCommand {
         )
     }
 
+    fun getItemById(id: Long): String = getItemByMap(mapOf("id" to id))
+
     fun insert(entity: Any): String =
         SQL()
             .apply {
@@ -238,6 +507,21 @@ class SqlCommand {
             }.toString()
     }
 
+    fun updateById(
+        entity: Any,
+        id: Long,
+    ): String = updateMapByMap(toMap(entity), mapOf("id" to id))
+
+    fun updateByMap(
+        entity: Any,
+        whereConditions: Map<String, Any>,
+    ): String = updateMapByMap(toMap(entity), whereConditions)
+
+    fun updateMapById(
+        updateMap: Map<String, Any>,
+        id: Long,
+    ): String = updateMapByMap(updateMap, mapOf("id" to id))
+
     fun updateMapByMap(
         updateMap: Map<String, Any>,
         whereConditions: Map<String, Any>,
@@ -267,6 +551,8 @@ class SqlCommand {
                 requiredWhereConditions(this)
             }.toString()
     }
+
+    fun deleteById(id: Long): String = deleteByMap(mapOf("id" to id))
 
     private fun requiredWhereConditions(sql: SQL) {
         if (!sql.toString().contains("WHERE ", ignoreCase = true)) {

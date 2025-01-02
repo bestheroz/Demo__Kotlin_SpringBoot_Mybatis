@@ -3,225 +3,128 @@ package com.github.bestheroz.standard.common.mybatis
 import org.apache.ibatis.annotations.*
 
 interface SqlRepository<T : Any> {
-    fun getItems(): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = emptyMap(),
-            orderByConditions = emptyList(),
-            limit = null,
-            offset = null,
-        )
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.COUNT_ALL)
+    fun countAll(): Long
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.COUNT_BY_MAP)
+    fun countByMap(whereConditions: Map<String, Any>): Long
+
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS)
+    fun getItems(): List<T>
+
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_LIMIT_OFFSET)
     fun getItemsLimitOffset(
         limit: Int,
         offset: Int,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = emptyMap(),
-            orderByConditions = emptyList(),
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
-    fun getItemsOrderBy(orderByConditions: List<String>): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = emptyMap(),
-            orderByConditions = orderByConditions,
-            limit = null,
-            offset = null,
-        )
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_ORDER_BY)
+    fun getItemsOrderBy(orderByConditions: List<String>): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_ORDER_BY_LIMIT_OFFSET)
     fun getItemsOrderByLimitOffset(
         orderByConditions: List<String>,
         limit: Int,
         offset: Int,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = emptyMap(),
-            orderByConditions = orderByConditions,
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
-    fun getItemsByMap(whereConditions: Map<String, Any>): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = whereConditions,
-            orderByConditions = emptyList(),
-            limit = null,
-            offset = null,
-        )
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_BY_MAP)
+    fun getItemsByMap(whereConditions: Map<String, Any>): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_BY_MAP_LIMIT_OFFSET)
     fun getItemsByMapLimitOffset(
         whereConditions: Map<String, Any>,
         limit: Int?,
         offset: Int?,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = whereConditions,
-            orderByConditions = emptyList(),
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS_BY_MAP_ODER_BY)
     fun getItemsByMapOrderBy(
         whereConditions: Map<String, Any>,
         orderByConditions: List<String>,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = whereConditions,
-            orderByConditions = orderByConditions,
-            limit = null,
-            offset = null,
-        )
+    ): List<T>
 
+    @SelectProvider(
+        type = SqlCommand::class,
+        method = SqlCommand.SELECT_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+    )
     fun getItemsByMapOrderByLimitOffset(
         whereConditions: Map<String, Any>,
         orderByConditions: List<String>,
         limit: Int,
         offset: Int,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = emptySet(),
-            whereConditions = whereConditions,
-            orderByConditions = orderByConditions,
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
-    fun getDistinctItems(distinctColumns: Set<String>): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = distinctColumns,
-            targetColumns = emptySet(),
-            whereConditions = emptyMap(),
-            orderByConditions = emptyList(),
-            limit = null,
-            offset = null,
-        )
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_DISTINCT_ITEMS)
+    fun getDistinctItems(distinctColumns: Set<String>): List<T>
 
-    fun getTargetItems(targetColumns: Set<String>): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = emptyMap(),
-            orderByConditions = emptyList(),
-            limit = null,
-            offset = null,
-        )
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_TARGET_ITEMS)
+    fun getTargetItems(targetColumns: Set<String>): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_TARGET_ITEMS_LIMIT_OFFSET)
     fun getTargetItemsLimitOffset(
         targetColumns: Set<String>,
         limit: Int?,
         offset: Int?,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = emptyMap(),
-            orderByConditions = emptyList(),
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_TARGET_ITEMS_ORDER_BY)
     fun getTargetItemsOrderBy(
         targetColumns: Set<String>,
         orderByConditions: List<String>,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = emptyMap(),
-            orderByConditions = orderByConditions,
-            limit = null,
-            offset = null,
-        )
+    ): List<T>
 
+    @SelectProvider(
+        type = SqlCommand::class,
+        method = SqlCommand.SELECT_TARGET_ITEMS_ORDER_BY_LIMIT_OFFSET,
+    )
     fun getTargetItemsOrderByLimitOffset(
         targetColumns: Set<String>,
         orderByConditions: List<String>,
         limit: Int?,
         offset: Int?,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = emptyMap(),
-            orderByConditions = orderByConditions,
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP)
     fun getTargetItemsByMap(
         targetColumns: Set<String>,
         whereConditions: Map<String, Any>,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = whereConditions,
-            orderByConditions = emptyList(),
-            limit = null,
-            offset = null,
-        )
+    ): List<T>
 
+    @SelectProvider(
+        type = SqlCommand::class,
+        method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP_LIMIT_OFFSET,
+    )
     fun getTargetItemsByMapLimitOffset(
         targetColumns: Set<String>,
         whereConditions: Map<String, Any>,
         limit: Int?,
         offset: Int?,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = whereConditions,
-            orderByConditions = emptyList(),
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP_ODER_BY)
     fun getTargetItemsByMapOrderBy(
         targetColumns: Set<String>,
         whereConditions: Map<String, Any>,
         orderByConditions: List<String>,
-    ): List<T> =
-        getTargetItemsByMapOrderByLimitOffset(
-            targetColumns = targetColumns,
-            whereConditions = whereConditions,
-            orderByConditions = orderByConditions,
-            limit = null,
-            offset = null,
-        )
+    ): List<T>
 
+    @SelectProvider(
+        type = SqlCommand::class,
+        method = SqlCommand.SELECT_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+    )
     fun getTargetItemsByMapOrderByLimitOffset(
         targetColumns: Set<String>,
         whereConditions: Map<String, Any>,
         orderByConditions: List<String>,
         limit: Int?,
         offset: Int?,
-    ): List<T> =
-        getDistinctAndTargetItemsByMapOrderByLimitOffset(
-            distinctColumns = emptySet(),
-            targetColumns = targetColumns,
-            whereConditions = whereConditions,
-            orderByConditions = orderByConditions,
-            limit = limit,
-            offset = offset,
-        )
+    ): List<T>
 
-    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEMS)
+    @SelectProvider(
+        type = SqlCommand::class,
+        method = SqlCommand.SELECT_DISTINCT_AND_TARGET_ITEMS_BY_MAP_ODER_BY_LIMIT_OFFSET,
+    )
     fun getDistinctAndTargetItemsByMapOrderByLimitOffset(
         distinctColumns: Set<String>,
         targetColumns: Set<String>,
@@ -234,12 +137,8 @@ interface SqlRepository<T : Any> {
     @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEM_BY_MAP)
     fun getItemByMap(whereConditions: Map<String, Any>): T?
 
-    fun getItemById(id: Long): T? = getItemByMap(mapOf("id" to id))
-
-    fun countAll(): Long = countByMap(emptyMap())
-
-    @SelectProvider(type = SqlCommand::class, method = SqlCommand.COUNT_BY_MAP)
-    fun countByMap(whereConditions: Map<String, Any>): Long
+    @SelectProvider(type = SqlCommand::class, method = SqlCommand.SELECT_ITEM_BY_ID)
+    fun getItemById(id: Long): T?
 
     @InsertProvider(type = SqlCommand::class, method = SqlCommand.INSERT)
     @Options(useGeneratedKeys = true, keyProperty = "id")
@@ -249,19 +148,23 @@ interface SqlRepository<T : Any> {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     fun insertBatch(entities: List<T>)
 
+    @UpdateProvider(type = SqlCommand::class, method = SqlCommand.UPDATE_BY_ID)
     fun updateById(
         entity: T,
         id: Long,
-    ) {
-        updateMapByMap(SqlCommand.toMap(entity), mapOf("id" to id))
-    }
+    )
 
+    @UpdateProvider(type = SqlCommand::class, method = SqlCommand.UPDATE_BY_MAP)
     fun updateByMap(
         entity: T,
         whereConditions: Map<String, Any>,
-    ) {
-        updateMapByMap(SqlCommand.toMap(entity), whereConditions)
-    }
+    )
+
+    @UpdateProvider(type = SqlCommand::class, method = SqlCommand.UPDATE_MAP_BY_ID)
+    fun updateMapById(
+        updateMap: Map<String, Any>,
+        id: Long,
+    )
 
     @UpdateProvider(type = SqlCommand::class, method = SqlCommand.UPDATE_MAP_BY_MAP)
     fun updateMapByMap(
@@ -269,17 +172,9 @@ interface SqlRepository<T : Any> {
         whereConditions: Map<String, Any>,
     )
 
-    fun updateMapById(
-        updateMap: Map<String, Any>,
-        id: Long,
-    ) {
-        updateMapByMap(updateMap, mapOf("id" to id))
-    }
-
     @DeleteProvider(type = SqlCommand::class, method = SqlCommand.DELETE_BY_MAP)
     fun deleteByMap(whereConditions: Map<String, Any>)
 
-    fun deleteById(id: Long) {
-        deleteByMap(mapOf("id" to id))
-    }
+    @DeleteProvider(type = SqlCommand::class, method = SqlCommand.DELETE_BY_ID)
+    fun deleteById(id: Long)
 }
