@@ -110,9 +110,7 @@ class UserService(
                     request.authorities,
                     operator,
                 )
-                it
-            }.let {
-                userRepository.insert(it)
+                userRepository.updateById(it, id)
                 it
             }.let {
                 operatorHelper.fulfilOperator(it)
@@ -124,15 +122,20 @@ class UserService(
     fun deleteUser(
         id: Long,
         operator: Operator,
-    ) = userRepository.getItemById(id)?.let { user ->
-        user
-            .takeIf { it.removedFlag }
-            ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER) }
-        user
-            .takeIf { it.id == operator.id }
-            ?.let { throw BadRequest400Exception(ExceptionCode.CANNOT_REMOVE_YOURSELF) }
-        user.remove(operator)
-    } ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
+    ) = userRepository
+        .getItemById(id)
+        ?.let { user ->
+            user
+                .takeIf { it.removedFlag }
+                ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER) }
+            user
+                .takeIf { it.id == operator.id }
+                ?.let { throw BadRequest400Exception(ExceptionCode.CANNOT_REMOVE_YOURSELF) }
+            user
+        }?.let {
+            it.remove(operator)
+            userRepository.updateById(it, id)
+        } ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
 
     @Transactional
     fun changePassword(
@@ -158,8 +161,10 @@ class UserService(
                 user
             }?.let {
                 it.changePassword(request.newPassword, operator)
+                userRepository.updateById(it, id)
                 it
-            }?.let(UserDto.Response::of) ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
+            }?.let(operatorHelper::fulfilOperator)
+            ?.let(UserDto.Response::of) ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
 
     @Transactional
     fun loginUser(request: UserLoginDto.Request): TokenDto =
@@ -178,8 +183,10 @@ class UserService(
                 user
             }?.let {
                 it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
+                userRepository.updateById(it, it.id!!)
                 it
-            }?.let { TokenDto(jwtTokenProvider.createAccessToken(Operator(it)), it.token!!) }
+            }?.let(operatorHelper::fulfilOperator)
+            ?.let { TokenDto(jwtTokenProvider.createAccessToken(Operator(it)), it.token!!) }
             ?: throw BadRequest400Exception(ExceptionCode.UNJOINED_ACCOUNT)
 
     @Transactional
@@ -194,6 +201,7 @@ class UserService(
                     return TokenDto(jwtTokenProvider.createAccessToken(Operator(user)), it)
                 } else if (it == refreshToken) {
                     user.renewToken(jwtTokenProvider.createRefreshToken(Operator(user)))
+                    userRepository.updateById(user, user.id!!)
                     return TokenDto(jwtTokenProvider.createAccessToken(Operator(user)), it)
                 }
             }
@@ -203,7 +211,10 @@ class UserService(
     @Transactional
     fun logout(id: Long) =
         try {
-            userRepository.getItemById(id)?.logout()
+            userRepository.getItemById(id)?.let {
+                it.logout()
+                userRepository.updateById(it, id)
+            }
         } catch (e: Exception) {
             log.warn(LogUtils.getStackTrace(e))
         }
@@ -212,11 +223,11 @@ class UserService(
         loginId: String,
         id: Long?,
     ): Boolean =
-        userRepository.getItemByMap(
+        userRepository.countByMap(
             buildMap {
                 put("loginId", loginId)
                 put("removedFlag", false)
                 id?.let { put("id:not", it) }
             },
-        ) == null
+        ) == 0L
 }

@@ -13,6 +13,8 @@ class MyBatisConfig {
     @Bean
     fun mybatisConfigurationCustomizer(): ConfigurationCustomizer =
         ConfigurationCustomizer { configuration ->
+            configuration.isMapUnderscoreToCamelCase = true
+
             configuration.typeHandlerRegistry.register(
                 List::class.java,
                 GenericListTypeHandler(AuthorityEnum::class.java),

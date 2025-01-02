@@ -69,6 +69,7 @@ class NoticeService(
             .getItemById(id)
             ?.let {
                 it.update(request.title, request.content, request.useFlag, operator)
+                noticeRepository.updateById(it, id)
                 it
             }?.let(operatorHelper::fulfilOperator)
             ?.let(NoticeDto.Response::of) ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
@@ -77,6 +78,8 @@ class NoticeService(
     fun deleteNotice(
         id: Long,
         operator: Operator,
-    ) = noticeRepository.getItemById(id)?.remove(operator)
-        ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
+    ) = noticeRepository.getItemById(id)?.let {
+        it.remove(operator)
+        noticeRepository.updateById(it, id)
+    } ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
 }

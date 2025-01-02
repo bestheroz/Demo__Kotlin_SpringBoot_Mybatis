@@ -24,7 +24,7 @@ data class Operator(
         name = admin.name,
         type = admin.getType(),
         managerFlag = admin.managerFlag,
-        authorities = admin.authorities,
+        authorities = if (admin.managerFlag) AuthorityEnum.entries else admin.authorities,
     )
 
     constructor(

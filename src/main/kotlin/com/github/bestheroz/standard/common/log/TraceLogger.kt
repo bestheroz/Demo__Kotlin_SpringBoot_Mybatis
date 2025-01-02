@@ -17,6 +17,7 @@ class TraceLogger(
         private val log = logger()
         private const val STR_START_EXECUTE_TIME = "{} START ......."
         private const val STR_END_EXECUTE_TIME = "{} E N D [{}ms] - return: {}"
+        private const val STR_END_EXECUTE_TIME_FOR_REPOSITORY = "{} E N D [{}ms]"
         private const val STR_END_EXECUTE_TIME_FOR_EXCEPTION = "{} THROW [{}ms]"
     }
 
@@ -45,15 +46,22 @@ class TraceLogger(
             val retVal = pjp.proceed()
             stopWatch.stop()
 
-            log.info(
-                STR_END_EXECUTE_TIME,
-                signature,
-                stopWatch.totalTimeMillis,
-                retVal?.let {
-                    val str = objectMapper.writeValueAsString(retVal)
-                    str.abbreviate(1000, "--skip massive text-- total length : ${str.length}")
-                } ?: "null",
-            )
+            when {
+                signature.containsAny("Repository.", "RepositoryCustom.", ".domain.") -> {
+                    log.info(STR_END_EXECUTE_TIME_FOR_REPOSITORY, signature, stopWatch.totalTimeMillis)
+                }
+                else -> {
+                    log.info(
+                        STR_END_EXECUTE_TIME,
+                        signature,
+                        stopWatch.totalTimeMillis,
+                        retVal?.let {
+                            val str = objectMapper.writeValueAsString(retVal)
+                            str.abbreviate(1000, "--skip massive text-- total length : ${str.length}")
+                        } ?: "null",
+                    )
+                }
+            }
 
             retVal
         } catch (e: Throwable) {
@@ -62,10 +70,6 @@ class TraceLogger(
             }
             log.info(STR_END_EXECUTE_TIME_FOR_EXCEPTION, signature, stopWatch.totalTimeMillis)
             throw e
-        } finally {
-            if (stopWatch.isRunning) {
-                stopWatch.stop()
-            }
         }
     }
 
