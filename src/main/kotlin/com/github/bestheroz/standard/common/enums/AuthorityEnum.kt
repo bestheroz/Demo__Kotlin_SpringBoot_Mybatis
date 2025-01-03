@@ -1,5 +1,7 @@
 package com.github.bestheroz.standard.common.enums
 
+import io.github.bestheroz.mybatis.type.ValueEnum
+
 enum class AuthorityEnum(
     private val value: String,
 ) : ValueEnum {

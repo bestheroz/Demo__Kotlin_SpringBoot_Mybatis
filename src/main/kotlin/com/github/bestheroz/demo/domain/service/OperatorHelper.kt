@@ -82,10 +82,8 @@ class OperatorHelper(
             emptyMap()
         } else {
             adminRepository
-                .getTargetItemsByMap(
-                    targetColumns = setOf("id", "loginId", "name"),
-                    whereConditions = mapOf("id:in" to adminIds),
-                ).associateBy { it.id!! }
+                .getTargetItemsByMap(setOf("id", "loginId", "name"), mapOf("id:in" to adminIds))
+                .associateBy { it.id!! }
         }
 
     private fun fetchUserMap(userIds: Set<Long>): Map<Long, User> =
@@ -93,10 +91,8 @@ class OperatorHelper(
             emptyMap()
         } else {
             userRepository
-                .getTargetItemsByMap(
-                    targetColumns = setOf("id", "loginId", "name"),
-                    whereConditions = mapOf("id:in" to userIds),
-                ).associateBy { it.id!! }
+                .getTargetItemsByMap(setOf("id", "loginId", "name"), mapOf("id:in" to userIds))
+                .associateBy { it.id!! }
         }
 
     private fun setOperatorData(

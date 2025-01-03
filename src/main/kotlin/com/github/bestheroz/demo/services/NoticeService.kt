@@ -30,8 +30,8 @@ class NoticeService(
                         .getItemsByMapOrderByLimitOffset(
                             mapOf("removedFlag" to false),
                             listOf("-id"),
-                            request.page,
                             request.pageSize,
+                            (request.page - 1) * request.pageSize,
                         ).let(operatorHelper::fulfilOperator)
                         .map(NoticeDto.Response::of)
                 },
@@ -41,8 +41,11 @@ class NoticeService(
     fun getNotice(id: Long): NoticeDto.Response =
         noticeRepository
             .getItemById(id)
-            ?.let(operatorHelper::fulfilOperator)
-            ?.let(NoticeDto.Response::of) ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
+            .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
+            .let {
+                operatorHelper.fulfilOperator(it)
+                it
+            }.let(NoticeDto.Response::of)
 
     @Transactional
     fun createNotice(
@@ -67,19 +70,25 @@ class NoticeService(
     ): NoticeDto.Response =
         noticeRepository
             .getItemById(id)
-            ?.let {
+            .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
+            .let {
                 it.update(request.title, request.content, request.useFlag, operator)
                 noticeRepository.updateById(it, id)
                 it
-            }?.let(operatorHelper::fulfilOperator)
-            ?.let(NoticeDto.Response::of) ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
+            }.let {
+                operatorHelper.fulfilOperator(it)
+                it
+            }.let(NoticeDto.Response::of)
 
     @Transactional
     fun deleteNotice(
         id: Long,
         operator: Operator,
-    ) = noticeRepository.getItemById(id)?.let {
-        it.remove(operator)
-        noticeRepository.updateById(it, id)
-    } ?: throw BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE)
+    ) = noticeRepository
+        .getItemById(id)
+        .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
+        .let {
+            it.remove(operator)
+            noticeRepository.updateById(it, id)
+        }
 }

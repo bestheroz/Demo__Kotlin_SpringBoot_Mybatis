@@ -1,6 +1,6 @@
 package com.github.bestheroz.standard.common.mybatis.handler
 
-import com.github.bestheroz.standard.common.enums.ValueEnum
+import io.github.bestheroz.mybatis.type.ValueEnum
 import org.apache.ibatis.type.BaseTypeHandler
 import org.apache.ibatis.type.JdbcType
 import java.sql.CallableStatement

@@ -44,6 +44,15 @@ jwt:
   secret: JOONY.KIM!!demo-api%%jwt^^secret
   access-token-expiration-minutes: 5
   refresh-token-expiration-minutes: 30
+mybatis-repository:
+  exclude-fields:
+    - updatedByAdmin
+    - updatedByUser
+    - updater
+    - createdByAdmin
+    - createdByUser
+    - creator
+    - Companion
 ---
 spring:
   config:
