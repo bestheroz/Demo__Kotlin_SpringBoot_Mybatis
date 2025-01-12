@@ -150,13 +150,13 @@ class UserService(
                 if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
                 it.password
                     ?.takeUnless { password -> verifyPassword(request.oldPassword, password) }
-                    ?.also {
+                    ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
                 it.password
                     ?.takeIf { password -> password == request.newPassword }
-                    ?.also { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
+                    ?.let { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
             }.apply {
                 changePassword(request.newPassword, operator)
                 userRepository.updateById(this, id)
@@ -172,7 +172,7 @@ class UserService(
                 if (!it.useFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_USER)
                 it.password
                     ?.takeUnless { password -> verifyPassword(request.password, password) }
-                    ?.also {
+                    ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }

@@ -152,13 +152,13 @@ class AdminService(
                 if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
                 it.password
                     ?.takeUnless { password -> verifyPassword(request.oldPassword, password) }
-                    ?.also {
+                    ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
                 it.password
                     ?.takeIf { password -> password == request.newPassword }
-                    ?.also { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
+                    ?.let { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
             }.apply {
                 changePassword(request.newPassword, operator)
                 adminRepository.updateById(this, id)
@@ -174,7 +174,7 @@ class AdminService(
                 if (!it.useFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
                 it.password
                     ?.takeUnless { password -> verifyPassword(request.password, password) }
-                    ?.also {
+                    ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
