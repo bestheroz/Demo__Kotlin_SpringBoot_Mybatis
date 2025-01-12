@@ -17,7 +17,6 @@ import com.github.bestheroz.standard.common.util.PasswordUtil.verifyPassword
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -35,34 +34,34 @@ class AdminService(
 
     fun getAdminList(request: AdminDto.Request): ListResult<AdminDto.Response> {
         val count = adminRepository.countByMap(mapOf("removedFlag" to false))
-        return ListResult(
-            page = request.page,
-            pageSize = request.pageSize,
-            total = count,
-            items =
-                if (count == 0L) {
-                    emptyList()
-                } else {
-                    adminRepository
-                        .getItemsByMapOrderByLimitOffset(
-                            mapOf("removedFlag" to false),
-                            listOf("-id"),
-                            request.pageSize,
-                            (request.page - 1) * request.pageSize,
-                        ).let(operatorHelper::fulfilOperator)
-                        .map(AdminDto.Response::of)
-                },
-        )
+        with(request) {
+            return ListResult(
+                page = page,
+                pageSize = pageSize,
+                total = count,
+                items =
+                    if (count == 0L) {
+                        emptyList()
+                    } else {
+                        adminRepository
+                            .getItemsByMapOrderByLimitOffset(
+                                mapOf("removedFlag" to false),
+                                listOf("-id"),
+                                pageSize,
+                                (page - 1) * pageSize,
+                            ).apply(operatorHelper::fulfilOperator)
+                            .map(AdminDto.Response::of)
+                    },
+            )
+        }
     }
 
     fun getAdmin(id: Long): AdminDto.Response =
         adminRepository
             .getItemById(id)
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-            .let {
-                operatorHelper.fulfilOperator(it)
-                it
-            }.let(AdminDto.Response::of)
+            .apply(operatorHelper::fulfilOperator)
+            .let(AdminDto.Response::of)
 
     @Transactional
     fun createAdmin(
@@ -74,12 +73,9 @@ class AdminService(
             .ifPresent { throw BadRequest400Exception(ExceptionCode.ALREADY_JOINED_ACCOUNT) }
         return request
             .toEntity(operator)
-            .let {
-                adminRepository.insert(it)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+            .apply {
+                adminRepository.insert(this)
+                operatorHelper.fulfilOperator(this)
             }.let(AdminDto.Response::of)
     }
 
@@ -95,23 +91,22 @@ class AdminService(
                     mapOf("loginId" to request.loginId, "removedFlag" to false, "id:not" to id),
                 )
             }
+        val adminDeferred = coroutineScope.async(Dispatchers.IO) { adminRepository.getItemById(id) }
 
-        val admin =
-            withContext(Dispatchers.IO) { adminRepository.getItemById(id) }
-                .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
         adminLoginIdDeferred.await().ifPresent {
             BadRequest400Exception(ExceptionCode.ALREADY_JOINED_ACCOUNT)
         }
-        admin
-            .takeIf { it.removedFlag }
-            ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-        admin
-            .takeIf { !request.managerFlag && it.id == operator.id }
-            ?.let { throw BadRequest400Exception(ExceptionCode.CANNOT_UPDATE_YOURSELF) }
 
-        return admin
-            .let { it ->
-                it.update(
+        return adminDeferred
+            .await()
+            .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
+            .also {
+                if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
+                if (!request.managerFlag && it.id == operator.id) {
+                    throw BadRequest400Exception(ExceptionCode.CANNOT_UPDATE_YOURSELF)
+                }
+            }.apply {
+                update(
                     request.loginId,
                     request.password,
                     request.name,
@@ -120,11 +115,8 @@ class AdminService(
                     request.authorities,
                     operator,
                 )
-                adminRepository.updateById(it, id)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+                adminRepository.updateById(this, id)
+                operatorHelper.fulfilOperator(this)
             }.let(AdminDto.Response::of)
     }
 
@@ -132,21 +124,20 @@ class AdminService(
     fun deleteAdmin(
         id: Long,
         operator: Operator,
-    ) = adminRepository
-        .getItemById(id)
-        .orElseThrow { (BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)) }
-        .let { admin ->
-            admin
-                .takeIf { it.removedFlag }
-                ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-            admin
-                .takeIf { operator.type == UserTypeEnum.ADMIN && it.id == operator.id }
-                ?.let { throw BadRequest400Exception(ExceptionCode.CANNOT_REMOVE_YOURSELF) }
-            admin
-        }.let {
-            it.remove(operator)
-            adminRepository.updateById(it, id)
-        }
+    ) {
+        adminRepository
+            .getItemById(id)
+            .orElseThrow { (BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)) }
+            .also {
+                if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
+                if (operator.type == UserTypeEnum.ADMIN && it.id == operator.id) {
+                    throw BadRequest400Exception(ExceptionCode.CANNOT_REMOVE_YOURSELF)
+                }
+            }.apply {
+                remove(operator)
+                adminRepository.updateById(this, id)
+            }
+    }
 
     @Transactional
     fun changePassword(
@@ -157,27 +148,21 @@ class AdminService(
         adminRepository
             .getItemById(id)
             .orElseThrow { (BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)) }
-            .let { admin ->
-                admin
-                    .takeIf { it.removedFlag }
-                    ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-                admin.password
-                    ?.takeUnless { verifyPassword(request.oldPassword, it) }
-                    ?.let {
+            .also {
+                if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
+                it.password
+                    ?.takeUnless { password -> verifyPassword(request.oldPassword, password) }
+                    ?.also {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
-                admin.password
-                    ?.takeIf { it == request.newPassword }
-                    ?.let { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
-                admin
-            }.let {
-                it.changePassword(request.newPassword, operator)
-                adminRepository.updateById(it, id)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+                it.password
+                    ?.takeIf { password -> password == request.newPassword }
+                    ?.also { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
+            }.apply {
+                changePassword(request.newPassword, operator)
+                adminRepository.updateById(this, id)
+                operatorHelper.fulfilOperator(this)
             }.let(AdminDto.Response::of)
 
     @Transactional
@@ -185,24 +170,18 @@ class AdminService(
         adminRepository
             .getItemByMap(mapOf("loginId" to request.loginId, "removedFlag" to false))
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNJOINED_ACCOUNT) }
-            .let { admin ->
-                admin
-                    .takeUnless { admin.useFlag }
-                    ?.let { throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-                admin.password
-                    ?.takeUnless { verifyPassword(request.password, it) }
-                    ?.let {
+            .also {
+                if (!it.useFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
+                it.password
+                    ?.takeUnless { password -> verifyPassword(request.password, password) }
+                    ?.also {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
-                admin
-            }.let {
-                it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
-                adminRepository.updateById(it, it.id!!)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+            }.apply {
+                renewToken(jwtTokenProvider.createRefreshToken(Operator(this)))
+                adminRepository.updateById(this, this.id!!)
+                operatorHelper.fulfilOperator(this)
             }.let { TokenDto(jwtTokenProvider.createAccessToken(Operator(it)), it.token ?: "") }
 
     @Transactional
@@ -210,21 +189,21 @@ class AdminService(
         adminRepository
             .getItemById(jwtTokenProvider.getId(refreshToken))
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN) }
-            .let { admin ->
-                admin
-                    .takeIf {
-                        admin.removedFlag ||
-                            admin.token == null ||
-                            !jwtTokenProvider.validateToken(refreshToken)
-                    }?.let { throw Unauthorized401Exception() }
-
-                admin.token?.let { it ->
-                    if (jwtTokenProvider.issuedRefreshTokenIn3Seconds(it)) {
-                        return TokenDto(jwtTokenProvider.createAccessToken(Operator(admin)), it)
-                    } else if (it == refreshToken) {
-                        admin.renewToken(jwtTokenProvider.createRefreshToken(Operator(admin)))
-                        adminRepository.updateById(admin, admin.id!!)
-                        return TokenDto(jwtTokenProvider.createAccessToken(Operator(admin)), it)
+            .also {
+                if (it.removedFlag || it.token == null || !jwtTokenProvider.validateToken(refreshToken)) {
+                    throw Unauthorized401Exception()
+                }
+            }.apply {
+                token?.let {
+                    if (it == refreshToken) {
+                        renewToken(jwtTokenProvider.createRefreshToken(Operator(this)))
+                        adminRepository.updateById(this, this.id!!)
+                    }
+                }
+            }.run {
+                token?.let { it ->
+                    if (jwtTokenProvider.issuedRefreshTokenIn3Seconds(it) || it == refreshToken) {
+                        return TokenDto(jwtTokenProvider.createAccessToken(Operator(this)), it)
                     }
                 }
                 throw Unauthorized401Exception()

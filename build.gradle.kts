@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
 
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    id("com.google.devtools.ksp") version "2.1.20-Beta1-1.0.29"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "7.0.1"
@@ -37,8 +37,8 @@ dependencies {
     implementation(kotlin("noarg"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation("com.google.dagger:dagger-compiler:2.54")
-    ksp("com.google.dagger:dagger-compiler:2.54")
+    implementation("com.google.dagger:dagger-compiler:2.55")
+    ksp("com.google.dagger:dagger-compiler:2.55")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
@@ -62,8 +62,8 @@ dependencies {
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.4.0")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0-rc.3")
-    implementation("io.sentry:sentry-logback:8.0.0-rc.3")
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0-rc.4")
+    implementation("io.sentry:sentry-logback:8.0.0-rc.4")
 
     // OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1")
