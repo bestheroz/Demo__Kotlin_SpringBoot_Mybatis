@@ -2,16 +2,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "2.1.0"
+    val kotlinVersion = "2.1.20-Beta2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
 
-    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
-    id("org.springframework.boot") version "3.4.1"
+    id("com.google.devtools.ksp") version "2.1.20-Beta2-1.0.29"
+    id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "7.0.1"
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.diffplug.spotless") version "7.0.2"
+    id("com.github.ben-manes.versions") version "0.52.0"
     idea
 }
 
@@ -28,7 +28,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.1")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.2")
     }
 }
 
@@ -37,8 +37,8 @@ dependencies {
     implementation(kotlin("noarg"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation("com.google.dagger:dagger-compiler:2.54")
-    ksp("com.google.dagger:dagger-compiler:2.54")
+    implementation("com.google.dagger:dagger-compiler:2.55")
+    ksp("com.google.dagger:dagger-compiler:2.55")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
@@ -53,21 +53,21 @@ dependencies {
     implementation("org.apache.commons:commons-lang3")
 
     // Database
-    implementation("com.mysql:mysql-connector-j:9.1.0")
+    implementation("com.mysql:mysql-connector-j:9.2.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
     implementation("io.github.bestheroz:mybatis-repository:0.3.4")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.0.0.Beta3")
+    implementation("org.hibernate.orm:hibernate-core:7.0.0.Beta4")
 
     // Logging and Sentry
-    implementation("com.auth0:java-jwt:4.4.0")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.0.0-rc.3")
-    implementation("io.sentry:sentry-logback:8.0.0-rc.3")
+    implementation("com.auth0:java-jwt:4.5.0")
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.2.0")
+    implementation("io.sentry:sentry-logback:8.2.0")
 
     // OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.1")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.4")
 
     // Utility
     implementation("org.fusesource.jansi:jansi:2.4.1")
