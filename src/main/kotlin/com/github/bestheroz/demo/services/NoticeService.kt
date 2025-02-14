@@ -18,34 +18,34 @@ class NoticeService(
 ) {
     fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> {
         val count = noticeRepository.countByMap(mapOf("removedFlag" to false))
-        return ListResult(
-            page = request.page,
-            pageSize = request.pageSize,
-            total = count,
-            items =
-                if (count == 0L) {
-                    emptyList()
-                } else {
-                    noticeRepository
-                        .getItemsByMapOrderByLimitOffset(
-                            mapOf("removedFlag" to false),
-                            listOf("-id"),
-                            request.pageSize,
-                            (request.page - 1) * request.pageSize,
-                        ).let(operatorHelper::fulfilOperator)
-                        .map(NoticeDto.Response::of)
-                },
-        )
+        return with(request) {
+            ListResult(
+                page = page,
+                pageSize = pageSize,
+                total = count,
+                items =
+                    if (count == 0L) {
+                        emptyList()
+                    } else {
+                        noticeRepository
+                            .getItemsByMapOrderByLimitOffset(
+                                mapOf("removedFlag" to false),
+                                listOf("-id"),
+                                pageSize,
+                                (page - 1) * pageSize,
+                            ).apply(operatorHelper::fulfilOperator)
+                            .map(NoticeDto.Response::of)
+                    },
+            )
+        }
     }
 
     fun getNotice(id: Long): NoticeDto.Response =
         noticeRepository
             .getItemById(id)
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-            .let {
-                operatorHelper.fulfilOperator(it)
-                it
-            }.let(NoticeDto.Response::of)
+            .apply(operatorHelper::fulfilOperator)
+            .let(NoticeDto.Response::of)
 
     @Transactional
     fun createNotice(
@@ -54,12 +54,9 @@ class NoticeService(
     ): NoticeDto.Response =
         request
             .toEntity(operator)
-            .let {
-                noticeRepository.insert(it)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+            .apply {
+                noticeRepository.insert(this)
+                operatorHelper.fulfilOperator(this)
             }.let(NoticeDto.Response::of)
 
     @Transactional
@@ -71,24 +68,23 @@ class NoticeService(
         noticeRepository
             .getItemById(id)
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-            .let {
-                it.update(request.title, request.content, request.useFlag, operator)
-                noticeRepository.updateById(it, id)
-                it
-            }.let {
-                operatorHelper.fulfilOperator(it)
-                it
+            .apply {
+                update(request.title, request.content, request.useFlag, operator)
+                noticeRepository.updateById(this, id)
+                operatorHelper.fulfilOperator(this)
             }.let(NoticeDto.Response::of)
 
     @Transactional
     fun deleteNotice(
         id: Long,
         operator: Operator,
-    ) = noticeRepository
-        .getItemById(id)
-        .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-        .let {
-            it.remove(operator)
-            noticeRepository.updateById(it, id)
-        }
+    ) {
+        noticeRepository
+            .getItemById(id)
+            .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
+            .apply {
+                remove(operator)
+                noticeRepository.updateById(this, id)
+            }
+    }
 }

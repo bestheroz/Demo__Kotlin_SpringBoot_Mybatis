@@ -104,17 +104,17 @@ class OperatorHelper(
         operators.forEach { operator ->
             when (operator.createdObjectType) {
                 UserTypeEnum.ADMIN ->
-                    adminMap[operator.createdObjectId]?.let { admin -> operator.createdByAdmin = admin }
+                    adminMap[operator.createdObjectId]?.apply { operator.createdByAdmin = this }
                 UserTypeEnum.USER ->
-                    userMap[operator.createdObjectId]?.let { user -> operator.createdByUser = user }
+                    userMap[operator.createdObjectId]?.apply { operator.createdByUser = this }
             }
 
             if (includeUpdated && operator is IdCreatedUpdated) {
                 when (operator.updatedObjectType) {
                     UserTypeEnum.ADMIN ->
-                        adminMap[operator.updatedObjectId]?.let { admin -> operator.updatedByAdmin = admin }
+                        adminMap[operator.updatedObjectId]?.apply { operator.updatedByAdmin = this }
                     UserTypeEnum.USER ->
-                        userMap[operator.updatedObjectId]?.let { user -> operator.updatedByUser = user }
+                        userMap[operator.updatedObjectId]?.apply { operator.updatedByUser = this }
                 }
             }
         }
