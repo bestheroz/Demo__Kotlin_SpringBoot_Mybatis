@@ -13,7 +13,6 @@ jobs:
       - uses: actions/checkout@main
 
       - name: set env
-        id: set-envs
         run: |
           if [ $GITHUB_REF_NAME = 'sandbox' ] || [ $GITHUB_REF_NAME = 'qa' ]; then
             PROFILE=$GITHUB_REF_NAME
@@ -33,11 +32,11 @@ jobs:
           echo "REF_BRANCH: $REF_BRANCH"
           echo "ECR_URI: $ECR_URI"
 
-          echo "TARGET_PATH=${TARGET_PATH}" >> $GITHUB_OUTPUT
-          echo "PROFILE=${PROFILE}" >> $GITHUB_OUTPUT
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
-          echo "REF_BRANCH=${REF_BRANCH}" >> $GITHUB_OUTPUT
-          echo "ECR_URI=${ECR_URI}" >> $GITHUB_OUTPUT
+          echo "TARGET_PATH=${TARGET_PATH}" >> $GITHUB_ENV
+          echo "PROFILE=${PROFILE}" >> $GITHUB_ENV
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "REF_BRANCH=${REF_BRANCH}" >> $GITHUB_ENV
+          echo "ECR_URI=${ECR_URI}" >> $GITHUB_ENV
 
       - name: Set up JDK 21
         uses: actions/setup-java@main
@@ -49,7 +48,7 @@ jobs:
         uses: gradle/actions/setup-gradle@main
 
       - name: Build with Gradle
-        run: ./gradlew assemble --no-daemon -Dspring.profiles.active=${{ steps.set-envs.outputs.PROFILE }}  -x test
+        run: ./gradlew assemble --no-daemon -Dspring.profiles.active=${{ env.PROFILE }}  -x test
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
@@ -64,8 +63,8 @@ jobs:
 
       - name: docker build and push
         run: |
-          ECR_URI=${{ steps.set-envs.outputs.ECR_URI }}
-          TAG_NAME=${{ steps.set-envs.outputs.TAG_NAME }}
+          ECR_URI=${{ env.ECR_URI }}
+          TAG_NAME=${{ env.TAG_NAME }}
 
           docker build -t $ECR_URI:$TAG_NAME .
           docker push $ECR_URI:$TAG_NAME
@@ -78,8 +77,8 @@ jobs:
           event-type: edit-kustomize
           client-payload: |
             {
-              "dockerImg":"${{steps.set-envs.outputs.ECR_URI}}:${{steps.set-envs.outputs.TAG_NAME}}",
-              "refBranch":"${{ steps.set-envs.outputs.REF_BRANCH }}",
-              "tagName":"${{ steps.set-envs.outputs.TAG_NAME }}",
-              "targetPath":"${{ steps.set-envs.outputs.TARGET_PATH }}"
+              "dockerImg":"${{env.ECR_URI}}:${{env.TAG_NAME}}",
+              "refBranch":"${{ env.REF_BRANCH }}",
+              "tagName":"${{ env.TAG_NAME }}",
+              "targetPath":"${{ env.TARGET_PATH }}"
             }
