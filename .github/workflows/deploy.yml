@@ -3,6 +3,11 @@ on:
   push:
     branches: [ sandbox, qa ]
     tags: ['^[0-9]+\.[0-9]+\.[0-9]+$']
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOYER_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOYER_AWS_ACCESS_KEY_ID }}
+  GITHUB_TOKEN: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -53,9 +58,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@master
         with:
-          aws-access-key-id: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -72,7 +77,7 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@main
         with:
-          token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
+          token: ${{ env.GITHUB_TOKEN }}
           repository: bestheroz/Demo__EKS
           event-type: edit-kustomize
           client-payload: |
