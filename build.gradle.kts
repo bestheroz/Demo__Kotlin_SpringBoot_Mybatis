@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.3")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.4")
     }
 }
 
@@ -56,7 +56,7 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
     implementation("io.github.bestheroz:mybatis-repository:0.3.4")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.0.0.Beta4")
+    implementation("org.hibernate.orm:hibernate-core:7.0.0.Beta5")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
@@ -64,8 +64,8 @@ dependencies {
     implementation("io.sentry:sentry-logback:8.5.0")
 
     // OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.5")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.6")
 
     // Utility
     implementation("org.fusesource.jansi:jansi:2.4.1")
