@@ -13,7 +13,7 @@ import com.github.bestheroz.standard.common.exception.Unauthorized401Exception
 import com.github.bestheroz.standard.common.log.logger
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.LogUtils
-import com.github.bestheroz.standard.common.util.PasswordUtil.verifyPassword
+import com.github.bestheroz.standard.common.util.PasswordUtil.isPasswordValid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -151,7 +151,7 @@ class AdminService(
             .also {
                 if (it.removedFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
                 it.password
-                    ?.takeUnless { password -> verifyPassword(request.oldPassword, password) }
+                    ?.takeUnless { password -> isPasswordValid(request.oldPassword, password) }
                     ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
@@ -173,7 +173,7 @@ class AdminService(
             .also {
                 if (!it.useFlag) throw BadRequest400Exception(ExceptionCode.UNKNOWN_ADMIN)
                 it.password
-                    ?.takeUnless { password -> verifyPassword(request.password, password) }
+                    ?.takeUnless { password -> isPasswordValid(request.password, password) }
                     ?.let {
                         log.warn("password not match")
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
