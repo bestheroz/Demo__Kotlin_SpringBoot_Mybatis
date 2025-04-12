@@ -18,40 +18,31 @@ class GenericEnumTypeHandler<E : ValueEnum>(
     override fun setNonNullParameter(
         ps: PreparedStatement,
         i: Int,
-        parameter: E,
+        parameter: E?,
         jdbcType: JdbcType?,
     ) {
         if (parameter == null) {
             // jdbcType?.TYPE_CODE가 null이면 기본값 0 지정
             ps.setNull(i, jdbcType?.TYPE_CODE ?: 0)
         } else {
-            ps.setString(i, parameter.getValue())
+            ps.setString(i, parameter.value)
         }
     }
 
     override fun getNullableResult(
         rs: ResultSet,
         columnName: String?,
-    ): E? {
-        val value = rs.getString(columnName)
-        return getEnum(value)
-    }
+    ): E? = getEnum(rs.getString(columnName))
 
     override fun getNullableResult(
         rs: ResultSet,
         columnIndex: Int,
-    ): E? {
-        val value = rs.getString(columnIndex)
-        return getEnum(value)
-    }
+    ): E? = getEnum(rs.getString(columnIndex))
 
     override fun getNullableResult(
         cs: CallableStatement,
         columnIndex: Int,
-    ): E? {
-        val value = cs.getString(columnIndex)
-        return getEnum(value)
-    }
+    ): E? = getEnum(cs.getString(columnIndex))
 
     @Throws(SQLException::class)
     private fun getEnum(value: String?): E? {
@@ -60,7 +51,7 @@ class GenericEnumTypeHandler<E : ValueEnum>(
         }
         return try {
             for (enumConstant in type!!.enumConstants) {
-                if (enumConstant.getValue() == value) {
+                if (enumConstant.value == value) {
                     return enumConstant
                 }
             }
