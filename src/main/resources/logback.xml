@@ -45,10 +45,16 @@
   <logger name="com.amazonaws" level="INFO"/>
 
 
-  <root level="DEBUG">
-<!--    <springProfile name="sandbox, qa, prod">-->
-<!--      <appender-ref ref="SENTRY"/>-->
-<!--    </springProfile>-->
-    <appender-ref ref="CONSOLE"/>
-  </root>
+  <springProfile name="sandbox, qa, prod">
+    <root level="DEBUG">
+      <appender-ref ref="SENTRY"/>
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+  <springProfile name="local">
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+  </springProfile>
+
 </configuration>
