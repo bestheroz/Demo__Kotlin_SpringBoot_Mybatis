@@ -32,27 +32,36 @@ class AdminController(
     fun getAdminList(
         @Schema(example = "1") @RequestParam page: Int,
         @Schema(example = "10") @RequestParam pageSize: Int,
-    ): ListResult<AdminDto.Response> = adminService.getAdminList(AdminDto.Request(page, pageSize))
+    ): ListResult<AdminDto.Response> =
+        runBlocking {
+            adminService.getAdminList(AdminDto.Request(page, pageSize))
+        }
 
     @GetMapping("check-login-id")
     @Operation(summary = "로그인 아이디 중복 확인")
     fun checkLoginId(
         @Schema(description = "로그인 아이디") @RequestParam loginId: String,
         @Schema(description = "관리자 ID") @RequestParam(required = false) adminId: Long?,
-    ): Boolean = adminService.checkLoginId(loginId, adminId)
+    ): Boolean = runBlocking { adminService.checkLoginId(loginId, adminId) }
 
     @PostMapping("login")
     @Operation(summary = "관리자 로그인")
     fun loginAdmin(
         @RequestBody request: AdminLoginDto.Request,
-    ): TokenDto = adminService.loginAdmin(request)
+    ): TokenDto =
+        runBlocking {
+            adminService.loginAdmin(request)
+        }
 
     @GetMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAuthority('ADMIN_VIEW')")
     fun getAdmin(
         @PathVariable id: Long,
-    ): AdminDto.Response = adminService.getAdmin(id)
+    ): AdminDto.Response =
+        runBlocking {
+            adminService.getAdmin(id)
+        }
 
     @GetMapping("renew-token")
     @Operation(
@@ -65,7 +74,7 @@ class AdminController(
     )
     fun renewToken(
         @Schema(description = "리플래시 토큰") @RequestHeader(value = "AuthorizationR") refreshToken: String,
-    ): TokenDto = adminService.renewToken(refreshToken)
+    ): TokenDto = runBlocking { adminService.renewToken(refreshToken) }
 
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -73,7 +82,7 @@ class AdminController(
     fun createAdmin(
         @RequestBody request: AdminCreateDto.Request,
         @CurrentUser operator: Operator,
-    ): AdminDto.Response = adminService.createAdmin(request, operator)
+    ): AdminDto.Response = runBlocking { adminService.createAdmin(request, operator) }
 
     @PutMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
@@ -92,7 +101,7 @@ class AdminController(
         @PathVariable id: Long,
         @RequestBody request: AdminChangePasswordDto.Request,
         @CurrentUser operator: Operator,
-    ): AdminDto.Response = adminService.changePassword(id, request, operator)
+    ): AdminDto.Response = runBlocking { adminService.changePassword(id, request, operator) }
 
     @DeleteMapping("logout")
     @Operation(
@@ -102,10 +111,9 @@ class AdminController(
     )
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasAuthority('ADMIN_EDIT')")
     fun logout(
         @CurrentUser operator: Operator,
-    ) = adminService.logout(operator.id)
+    ) = runBlocking { adminService.logout(operator.id) }
 
     @DeleteMapping("{id}")
     @Operation(description = "(Soft delete)", responses = [ApiResponse(responseCode = "204")])
@@ -115,5 +123,7 @@ class AdminController(
     fun deleteAdmin(
         @PathVariable id: Long,
         @CurrentUser operator: Operator,
-    ) = adminService.deleteAdmin(id, operator)
+    ) = runBlocking {
+        adminService.deleteAdmin(id, operator)
+    }
 }

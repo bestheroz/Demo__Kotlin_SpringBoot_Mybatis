@@ -7,51 +7,65 @@ import com.github.bestheroz.demo.repository.UserRepository
 import com.github.bestheroz.standard.common.domain.IdCreated
 import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.springframework.stereotype.Component
 
 @Component
 class OperatorHelper(
     private val adminRepository: AdminRepository,
     private val userRepository: UserRepository,
+    private val coroutineScope: CoroutineScope,
 ) {
-    fun <T : IdCreatedUpdated> fulfilOperator(operators: List<T>): List<T> {
-        if (operators.isEmpty()) return operators
+    suspend fun <T : IdCreatedUpdated> fulfilOperator(operators: List<T>): List<T> =
+        coroutineScope {
+            if (operators.isEmpty()) return@coroutineScope operators
 
-        val adminIds = mutableSetOf<Long>()
-        val userIds = mutableSetOf<Long>()
+            val adminIds = mutableSetOf<Long>()
+            val userIds = mutableSetOf<Long>()
 
-        collectIds(operators, adminIds, userIds, includeUpdated = true)
+            collectIds(operators, adminIds, userIds, includeUpdated = true)
 
-        val adminMap = fetchAdminMap(adminIds)
-        val userMap = fetchUserMap(userIds)
+            val adminMapDeferred = async(Dispatchers.IO) { fetchAdminMap(adminIds) }
+            val userMapDeferred = async(Dispatchers.IO) { fetchUserMap(userIds) }
 
-        setOperatorData(operators, adminMap, userMap, includeUpdated = true)
+            setOperatorData(
+                operators,
+                adminMapDeferred.await(),
+                userMapDeferred.await(),
+                includeUpdated = true,
+            )
 
-        return operators
-    }
+            operators
+        }
 
-    fun <T : IdCreatedUpdated> fulfilOperator(operator: T?): T? {
-        if (operator == null) return null
-        return fulfilOperator(listOf(operator)).first()
-    }
+    suspend fun <T : IdCreatedUpdated> fulfilOperator(operator: T): T = fulfilOperator(listOf(operator)).first()
 
-    fun <T : IdCreated> fulfilCreatedOperator(operators: List<T>): List<T> {
-        if (operators.isEmpty()) return operators
+    suspend fun <T : IdCreated> fulfilCreatedOperator(operators: List<T>): List<T> =
+        coroutineScope {
+            if (operators.isEmpty()) return@coroutineScope operators
 
-        val adminIds = mutableSetOf<Long>()
-        val userIds = mutableSetOf<Long>()
+            val adminIds = mutableSetOf<Long>()
+            val userIds = mutableSetOf<Long>()
 
-        collectIds(operators, adminIds, userIds, includeUpdated = false)
+            collectIds(operators, adminIds, userIds, includeUpdated = false)
 
-        val adminMap = fetchAdminMap(adminIds)
-        val userMap = fetchUserMap(userIds)
+            val adminMapDeferred = async(Dispatchers.IO) { fetchAdminMap(adminIds) }
+            val userMapDeferred = async(Dispatchers.IO) { fetchUserMap(userIds) }
 
-        setOperatorData(operators, adminMap, userMap, includeUpdated = false)
+            setOperatorData(
+                operators,
+                adminMapDeferred.await(),
+                userMapDeferred.await(),
+                includeUpdated = false,
+            )
 
-        return operators
-    }
+            operators
+        }
 
-    fun <T : IdCreated> fulfilCreatedOperator(operator: T?): T? {
+    suspend fun <T : IdCreated> fulfilCreatedOperator(operator: T?): T? {
         if (operator == null) return null
         return fulfilCreatedOperator(listOf(operator)).first()
     }

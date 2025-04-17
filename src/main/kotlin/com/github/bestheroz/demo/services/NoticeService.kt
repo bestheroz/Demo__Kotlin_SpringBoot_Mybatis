@@ -8,6 +8,10 @@ import com.github.bestheroz.standard.common.dto.ListResult
 import com.github.bestheroz.standard.common.exception.BadRequest400Exception
 import com.github.bestheroz.standard.common.exception.ExceptionCode
 import com.github.bestheroz.standard.common.security.Operator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,75 +20,74 @@ class NoticeService(
     private val noticeRepository: NoticeRepository,
     private val operatorHelper: OperatorHelper,
 ) {
-    fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> {
-        val count = noticeRepository.countByMap(mapOf("removedFlag" to false))
-        return with(request) {
-            ListResult(
-                page = page,
-                pageSize = pageSize,
-                total = count,
-                items =
-                    if (count == 0L) {
-                        emptyList()
-                    } else {
-                        noticeRepository
-                            .getItemsByMapOrderByLimitOffset(
-                                mapOf("removedFlag" to false),
-                                listOf("-id"),
-                                pageSize,
-                                (page - 1) * pageSize,
-                            ).apply(operatorHelper::fulfilOperator)
-                            .map(NoticeDto.Response::of)
-                    },
-            )
-        }
-    }
+    suspend fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> =
+        coroutineScope {
+            val countDeferred =
+                async(Dispatchers.IO) { noticeRepository.countByMap(mapOf("removedFlag" to false)) }
+            val itemsDeferred =
+                async(Dispatchers.IO) {
+                    noticeRepository.getItemsByMapOrderByLimitOffset(
+                        mapOf("removedFlag" to false),
+                        listOf("-id"),
+                        request.pageSize,
+                        (request.page - 1) * request.pageSize,
+                    )
+                }
 
-    fun getNotice(id: Long): NoticeDto.Response =
-        noticeRepository
-            .getItemById(id)
+            val count = countDeferred.await()
+            val items =
+                if (count == 0L) {
+                    itemsDeferred.cancel()
+                    emptyList()
+                } else {
+                    operatorHelper.fulfilOperator(itemsDeferred.await()).map(NoticeDto.Response::of)
+                }
+
+            ListResult(page = request.page, pageSize = request.pageSize, total = count, items = items)
+        }
+
+    suspend fun getNotice(id: Long): NoticeDto.Response =
+        withContext(Dispatchers.IO) { noticeRepository.getItemById(id) }
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-            .apply(operatorHelper::fulfilOperator)
+            .let { operatorHelper.fulfilOperator(it) }
             .let(NoticeDto.Response::of)
 
     @Transactional
-    fun createNotice(
+    suspend fun createNotice(
         request: NoticeCreateDto.Request,
         operator: Operator,
     ): NoticeDto.Response =
         request
             .toEntity(operator)
-            .apply {
-                noticeRepository.insert(this)
-                operatorHelper.fulfilOperator(this)
+            .let {
+                withContext(Dispatchers.IO) { noticeRepository.insert(it) }
+                operatorHelper.fulfilOperator(it)
             }.let(NoticeDto.Response::of)
 
     @Transactional
-    fun updateNotice(
+    suspend fun updateNotice(
         id: Long,
         request: NoticeCreateDto.Request,
         operator: Operator,
     ): NoticeDto.Response =
-        noticeRepository
-            .getItemById(id)
+        withContext(Dispatchers.IO) { noticeRepository.getItemById(id) }
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-            .apply {
-                update(request.title, request.content, request.useFlag, operator)
-                noticeRepository.updateById(this, id)
-                operatorHelper.fulfilOperator(this)
+            .let {
+                it.update(request.title, request.content, request.useFlag, operator)
+                withContext(Dispatchers.IO) { noticeRepository.updateById(it, id) }
+                operatorHelper.fulfilOperator(it)
             }.let(NoticeDto.Response::of)
 
     @Transactional
-    fun deleteNotice(
+    suspend fun deleteNotice(
         id: Long,
         operator: Operator,
     ) {
-        noticeRepository
-            .getItemById(id)
+        withContext(Dispatchers.IO) { noticeRepository.getItemById(id) }
             .orElseThrow { BadRequest400Exception(ExceptionCode.UNKNOWN_NOTICE) }
-            .apply {
-                remove(operator)
-                noticeRepository.updateById(this, id)
+            .let {
+                it.remove(operator)
+                withContext(Dispatchers.IO) { noticeRepository.updateById(it, id) }
             }
     }
 }

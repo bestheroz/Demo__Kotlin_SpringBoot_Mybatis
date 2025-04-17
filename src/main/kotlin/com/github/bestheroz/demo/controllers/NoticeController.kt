@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
+import kotlinx.coroutines.runBlocking
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -25,12 +26,18 @@ class NoticeController(
     fun getNoticeList(
         @Schema(example = "1") @RequestParam page: Int,
         @Schema(example = "10") @RequestParam pageSize: Int,
-    ): ListResult<NoticeDto.Response> = noticeService.getNoticeList(NoticeDto.Request(page, pageSize))
+    ): ListResult<NoticeDto.Response> =
+        runBlocking {
+            noticeService.getNoticeList(NoticeDto.Request(page, pageSize))
+        }
 
     @GetMapping("{id}")
     fun getNotice(
         @PathVariable id: Long,
-    ): NoticeDto.Response = noticeService.getNotice(id)
+    ): NoticeDto.Response =
+        runBlocking {
+            noticeService.getNotice(id)
+        }
 
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -38,7 +45,7 @@ class NoticeController(
     fun createNotice(
         @RequestBody request: NoticeCreateDto.Request,
         @CurrentUser operator: Operator,
-    ): NoticeDto.Response = noticeService.createNotice(request, operator)
+    ): NoticeDto.Response = runBlocking { noticeService.createNotice(request, operator) }
 
     @PutMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
@@ -47,7 +54,7 @@ class NoticeController(
         @PathVariable id: Long,
         @RequestBody request: NoticeCreateDto.Request,
         @CurrentUser operator: Operator,
-    ): NoticeDto.Response = noticeService.updateNotice(id, request, operator)
+    ): NoticeDto.Response = runBlocking { noticeService.updateNotice(id, request, operator) }
 
     @DeleteMapping("{id}")
     @Operation(description = "(Soft delete)", responses = [ApiResponse(responseCode = "204")])
@@ -57,5 +64,7 @@ class NoticeController(
     fun deleteNotice(
         @PathVariable id: Long,
         @CurrentUser operator: Operator,
-    ) = noticeService.deleteNotice(id, operator)
+    ) = runBlocking {
+        noticeService.deleteNotice(id, operator)
+    }
 }
