@@ -187,7 +187,7 @@ class UserService(
             }.let {
                 it.token?.let { token ->
                     if (token == refreshToken) {
-                        renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
+                        it.token = jwtTokenProvider.createRefreshToken(Operator(it))
                         withContext(Dispatchers.IO) { userRepository.updateById(it, it.id!!) }
                     }
                 }
