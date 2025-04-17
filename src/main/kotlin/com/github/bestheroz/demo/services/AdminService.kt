@@ -197,7 +197,7 @@ class AdminService(
             }.let {
                 it.token?.let { token ->
                     if (token == refreshToken) {
-                        it.token = jwtTokenProvider.createRefreshToken(Operator(it))
+                        it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
                         withContext(Dispatchers.IO) { adminRepository.updateById(it, it.id!!) }
                     }
                 }
