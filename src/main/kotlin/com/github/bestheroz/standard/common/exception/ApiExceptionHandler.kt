@@ -88,7 +88,7 @@ class ApiExceptionHandler {
     @ExceptionHandler(BindException::class)
     fun bindException(e: Throwable?): ResponseEntity<ApiResult<*>> {
         log.warn(LogUtils.getStackTrace(e))
-        return ResponseEntity.badRequest().build()
+        return ResponseEntity.badRequest().body(of(ExceptionCode.INVALID_PARAMETER))
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
@@ -96,7 +96,9 @@ class ApiExceptionHandler {
         e: MissingServletRequestParameterException,
     ): ResponseEntity<ApiResult<*>> {
         log.warn(LogUtils.getStackTrace(e))
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build()
+        return ResponseEntity
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .body(of(ExceptionCode.INVALID_PARAMETER))
     }
 
     @ExceptionHandler(
