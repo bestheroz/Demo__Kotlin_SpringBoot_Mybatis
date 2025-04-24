@@ -7,6 +7,7 @@ import com.github.bestheroz.standard.common.util.LogUtils
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authorization.AuthorizationDeniedException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -14,6 +15,7 @@ import org.springframework.validation.BindException
 import org.springframework.web.HttpMediaTypeNotAcceptableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -74,7 +76,11 @@ class ApiExceptionHandler {
         return ResponseEntity.internalServerError().body(of(e.exceptionCode, e.data))
     }
 
-    @ExceptionHandler(IllegalArgumentException::class, IllegalStateException::class)
+    @ExceptionHandler(
+        IllegalArgumentException::class,
+        IllegalStateException::class,
+        HttpMessageNotReadableException::class,
+    )
     fun illegalArgumentException(e: Throwable?): ResponseEntity<ApiResult<*>> {
         log.warn(LogUtils.getStackTrace(e))
         return ResponseEntity
@@ -88,7 +94,7 @@ class ApiExceptionHandler {
     @ExceptionHandler(BindException::class)
     fun bindException(e: Throwable?): ResponseEntity<ApiResult<*>> {
         log.warn(LogUtils.getStackTrace(e))
-        return ResponseEntity.badRequest().body(of(ExceptionCode.INVALID_PARAMETER))
+        return ResponseEntity.badRequest().build()
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
@@ -99,6 +105,15 @@ class ApiExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(of(ExceptionCode.INVALID_PARAMETER))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun methodArgumentNotValidException(e: Throwable): ResponseEntity<ApiResult<*>> {
+        log.error(LogUtils.getStackTrace(e))
+        log.error("@CurrentUser 코드 누락됨")
+        return ResponseEntity
+            .internalServerError()
+            .body(of(ExceptionCode.UNKNOWN_SYSTEM_ERROR, "@CurrentUser 코드 누락됨"))
     }
 
     @ExceptionHandler(
