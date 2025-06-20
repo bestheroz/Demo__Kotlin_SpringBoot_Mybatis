@@ -7,7 +7,6 @@ import com.github.bestheroz.demo.repository.UserRepository
 import com.github.bestheroz.standard.common.domain.IdCreated
 import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component
 class OperatorHelper(
     private val adminRepository: AdminRepository,
     private val userRepository: UserRepository,
-    private val coroutineScope: CoroutineScope,
 ) {
     suspend fun <T : IdCreatedUpdated> fulfilOperator(operators: List<T>): List<T> =
         coroutineScope {

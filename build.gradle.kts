@@ -1,10 +1,10 @@
 plugins {
-    val kotlinVersion = "2.2.0-RC"
+    val kotlinVersion = "2.2.0-RC3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
 
-    id("com.google.devtools.ksp") version "2.2.0-RC-2.0.1"
+    id("com.google.devtools.ksp") version "2.2.0-RC3-2.0.2"
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "7.0.4"
@@ -54,18 +54,18 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:9.3.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.11.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
-    implementation("io.github.bestheroz:mybatis-repository:0.3.4")
+    implementation("io.github.bestheroz:mybatis-repository:0.7.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.0.0.Final")
+    implementation("org.hibernate.orm:hibernate-core:7.0.2.Final")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.13.2")
-    implementation("io.sentry:sentry-logback:8.13.2")
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.14.0")
+    implementation("io.sentry:sentry-logback:8.14.0")
 
     // OpenAPI
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.8")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.9")
 
     // Utility
     implementation("org.fusesource.jansi:jansi:2.4.2")

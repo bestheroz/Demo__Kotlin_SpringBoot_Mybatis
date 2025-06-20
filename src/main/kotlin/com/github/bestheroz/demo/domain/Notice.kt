@@ -2,16 +2,15 @@ package com.github.bestheroz.demo.domain
 
 import com.github.bestheroz.standard.common.domain.IdCreatedUpdated
 import com.github.bestheroz.standard.common.security.Operator
-import jakarta.persistence.Table
+import jakarta.persistence.Column
 import java.time.Instant
 
-@Table(name = "notices")
 data class Notice(
-    var title: String = "",
-    var content: String = "",
-    var useFlag: Boolean = false,
-    var removedFlag: Boolean = false,
-    private var removedAt: Instant? = null,
+    @field:Column var title: String = "",
+    @field:Column var content: String = "",
+    @field:Column var useFlag: Boolean = false,
+    @field:Column var removedFlag: Boolean = false,
+    @field:Column private var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
     companion object {
         fun of(

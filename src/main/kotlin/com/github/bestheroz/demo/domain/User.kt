@@ -5,23 +5,22 @@ import com.github.bestheroz.standard.common.enums.AuthorityEnum
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.PasswordUtil.getPasswordHash
-import jakarta.persistence.Table
+import jakarta.persistence.Column
 import java.time.Instant
 
-@Table(name = "users")
 data class User(
-    var loginId: String = "",
-    var password: String? = null,
-    var token: String? = null,
-    var name: String = "",
-    var useFlag: Boolean = false,
-    var authorities: List<AuthorityEnum> = mutableListOf(),
-    var changePasswordAt: Instant? = null,
-    var latestActiveAt: Instant? = null,
-    var joinedAt: Instant? = null,
-    var additionalInfo: Map<String, Any> = mutableMapOf(),
-    var removedFlag: Boolean = false,
-    var removedAt: Instant? = null,
+    @field:Column var loginId: String = "",
+    @field:Column var password: String? = null,
+    @field:Column var token: String? = null,
+    @field:Column var name: String = "",
+    @field:Column var useFlag: Boolean = false,
+    @field:Column var authorities: List<AuthorityEnum> = mutableListOf(),
+    @field:Column var changePasswordAt: Instant? = null,
+    @field:Column var latestActiveAt: Instant? = null,
+    @field:Column var joinedAt: Instant? = null,
+    @field:Column var additionalInfo: Map<String, Any> = mutableMapOf(),
+    @field:Column var removedFlag: Boolean = false,
+    @field:Column var removedAt: Instant? = null,
 ) : IdCreatedUpdated() {
     fun getType(): UserTypeEnum = UserTypeEnum.USER
 

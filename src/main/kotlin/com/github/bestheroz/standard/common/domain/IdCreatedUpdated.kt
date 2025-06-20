@@ -5,14 +5,15 @@ import com.github.bestheroz.demo.domain.User
 import com.github.bestheroz.standard.common.dto.UserSimpleDto
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
+import jakarta.persistence.Column
 import java.time.Instant
 
 abstract class IdCreatedUpdated : IdCreated() {
-    lateinit var updatedObjectType: UserTypeEnum
+    @field:Column lateinit var updatedObjectType: UserTypeEnum
 
-    lateinit var updatedAt: Instant
+    @field:Column lateinit var updatedAt: Instant
 
-    var updatedObjectId: Long = 0L
+    @field:Column var updatedObjectId: Long = 0L
 
     var updatedByAdmin: Admin? = null
 

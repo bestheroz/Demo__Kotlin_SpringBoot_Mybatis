@@ -5,16 +5,17 @@ import com.github.bestheroz.demo.domain.User
 import com.github.bestheroz.standard.common.dto.UserSimpleDto
 import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.security.Operator
+import jakarta.persistence.Column
 import java.time.Instant
 
 abstract class IdCreated {
-    var id: Long? = null
+    @field:Column var id: Long? = null
 
-    lateinit var createdAt: Instant
+    @field:Column lateinit var createdAt: Instant
 
-    lateinit var createdObjectType: UserTypeEnum
+    @field:Column lateinit var createdObjectType: UserTypeEnum
 
-    var createdObjectId: Long = 0L
+    @field:Column var createdObjectId: Long = 0L
 
     var createdByAdmin: Admin? = null
 
