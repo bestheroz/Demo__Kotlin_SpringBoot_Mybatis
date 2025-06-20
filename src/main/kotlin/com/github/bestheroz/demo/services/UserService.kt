@@ -30,12 +30,20 @@ class UserService(
 
     suspend fun getUserList(request: UserDto.Request): ListResult<UserDto.Response> =
         coroutineScope {
-            val countDeferred =
-                async(Dispatchers.IO) { userRepository.countByMap(mapOf("removedFlag" to false)) }
+            val filterMap =
+                buildMap {
+                    put("removedFlag", false)
+                    request.id?.let { put("id", it) }
+                    request.loginId?.let { put("loginId:contains", it) }
+                    request.name?.let { put("name:contains", it) }
+                    request.useFlag?.let { put("useFlag", it) }
+                }
+
+            val countDeferred = async(Dispatchers.IO) { userRepository.countByMap(filterMap) }
             val itemsDeferred =
                 async(Dispatchers.IO) {
                     userRepository.getItemsByMapOrderByLimitOffset(
-                        mapOf("removedFlag" to false),
+                        filterMap,
                         listOf("-id"),
                         request.pageSize,
                         (request.page - 1) * request.pageSize,

@@ -22,9 +22,9 @@ class NoticeController(
     private val noticeService: NoticeService,
 ) {
     @GetMapping
-    fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> =
+    fun getNoticeList(payload: NoticeDto.Request): ListResult<NoticeDto.Response> =
         runBlocking {
-            noticeService.getNoticeList(request)
+            noticeService.getNoticeList(payload)
         }
 
     @GetMapping("{id}")

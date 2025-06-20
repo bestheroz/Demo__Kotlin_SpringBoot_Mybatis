@@ -29,12 +29,9 @@ class AdminController(
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAuthority('ADMIN_VIEW')")
-    fun getAdminList(
-        @Schema(example = "1") @RequestParam page: Int,
-        @Schema(example = "10") @RequestParam pageSize: Int,
-    ): ListResult<AdminDto.Response> =
+    fun getAdminList(payload: AdminDto.Request): ListResult<AdminDto.Response> =
         runBlocking {
-            adminService.getAdminList(AdminDto.Request(page, pageSize))
+            adminService.getAdminList(payload)
         }
 
     @GetMapping("check-login-id")

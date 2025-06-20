@@ -29,12 +29,9 @@ class UserController(
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAuthority('USER_VIEW')")
-    fun getUserList(
-        @Schema(example = "1") @RequestParam page: Int,
-        @Schema(example = "10") @RequestParam pageSize: Int,
-    ): ListResult<UserDto.Response> =
+    fun getUserList(payload: UserDto.Request): ListResult<UserDto.Response> =
         runBlocking {
-            userService.getUserList(UserDto.Request(page, pageSize))
+            userService.getUserList(payload)
         }
 
     @GetMapping("check-login-id")

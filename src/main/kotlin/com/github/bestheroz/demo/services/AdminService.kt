@@ -34,12 +34,21 @@ class AdminService(
 
     suspend fun getAdminList(request: AdminDto.Request): ListResult<AdminDto.Response> =
         coroutineScope {
-            val countDeferred =
-                async(Dispatchers.IO) { adminRepository.countByMap(mapOf("removedFlag" to false)) }
+            val filterMap =
+                buildMap {
+                    put("removedFlag", false)
+                    request.id?.let { put("id", it) }
+                    request.loginId?.let { put("loginId:contains", it) }
+                    request.name?.let { put("name:contains", it) }
+                    request.useFlag?.let { put("useFlag", it) }
+                    request.managerFlag?.let { put("managerFlag", it) }
+                }
+
+            val countDeferred = async(Dispatchers.IO) { adminRepository.countByMap(filterMap) }
             val itemsDeferred =
                 async(Dispatchers.IO) {
                     adminRepository.getItemsByMapOrderByLimitOffset(
-                        mapOf("removedFlag" to false),
+                        filterMap,
                         listOf("-id"),
                         request.pageSize,
                         (request.page - 1) * request.pageSize,
