@@ -22,12 +22,19 @@ class NoticeService(
 ) {
     suspend fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> =
         coroutineScope {
-            val countDeferred =
-                async(Dispatchers.IO) { noticeRepository.countByMap(mapOf("removedFlag" to false)) }
+            val filterMap =
+                buildMap {
+                    put("removedFlag", false)
+                    request.id?.let { put("id", it) }
+                    request.title?.let { put("title:contains", it) }
+                    request.useFlag?.let { put("useFlag", it) }
+                }
+
+            val countDeferred = async(Dispatchers.IO) { noticeRepository.countByMap(filterMap) }
             val itemsDeferred =
                 async(Dispatchers.IO) {
                     noticeRepository.getItemsByMapOrderByLimitOffset(
-                        mapOf("removedFlag" to false),
+                        filterMap,
                         listOf("-id"),
                         request.pageSize,
                         (request.page - 1) * request.pageSize,

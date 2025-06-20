@@ -7,7 +7,6 @@ import com.github.bestheroz.standard.common.authenticate.CurrentUser
 import com.github.bestheroz.standard.common.dto.ListResult
 import com.github.bestheroz.standard.common.security.Operator
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -23,12 +22,9 @@ class NoticeController(
     private val noticeService: NoticeService,
 ) {
     @GetMapping
-    fun getNoticeList(
-        @Schema(example = "1") @RequestParam page: Int,
-        @Schema(example = "10") @RequestParam pageSize: Int,
-    ): ListResult<NoticeDto.Response> =
+    fun getNoticeList(request: NoticeDto.Request): ListResult<NoticeDto.Response> =
         runBlocking {
-            noticeService.getNoticeList(NoticeDto.Request(page, pageSize))
+            noticeService.getNoticeList(request)
         }
 
     @GetMapping("{id}")
