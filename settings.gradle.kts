@@ -1,1 +1,1 @@
-rootProject.name = "Demo__Kotlin_SpringBoot"
+rootProject.name = "Demo__Kotlin_SpringBoot_Mybatis"
