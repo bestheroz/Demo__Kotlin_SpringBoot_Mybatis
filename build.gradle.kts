@@ -54,7 +54,7 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:9.3.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.11.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
-    implementation("io.github.bestheroz:mybatis-repository:0.7.1")
+    implementation("io.github.bestheroz:mybatis-repository:0.8.0")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
     implementation("org.hibernate.orm:hibernate-core:7.0.4.Final")
 
