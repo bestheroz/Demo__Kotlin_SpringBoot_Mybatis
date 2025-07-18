@@ -166,7 +166,7 @@ class AdminService(
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
                 it.password
-                    ?.takeIf { password -> password == request.newPassword }
+                    ?.takeIf { password -> isPasswordValid(request.newPassword, password) }
                     ?.let { throw BadRequest400Exception(ExceptionCode.CHANGE_TO_SAME_PASSWORD) }
             }.let {
                 it.changePassword(request.newPassword, operator)
