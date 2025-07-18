@@ -8,6 +8,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 object DateUtils {
+    private val UTC_ZONE_ID = ZoneId.of("UTC")
+
     fun toStringNow(pattern: String): String {
         Assert.hasText(pattern, "pattern parameter must not be empty or null")
         return toString(Instant.now(), pattern)
@@ -18,7 +20,7 @@ object DateUtils {
         pattern: String,
     ): String {
         Assert.hasText(pattern, "pattern parameter must not be empty or null")
-        return toString(instant, pattern, ZoneId.of("UTC"))
+        return toString(instant, pattern, UTC_ZONE_ID)
     }
 
     fun toString(
@@ -37,7 +39,7 @@ object DateUtils {
         pattern: String,
     ): String {
         Assert.hasText(pattern, "pattern parameter must not be empty or null")
-        return toString(timestamp, pattern, ZoneId.of("UTC"))
+        return toString(timestamp, pattern, UTC_ZONE_ID)
     }
 
     fun toString(

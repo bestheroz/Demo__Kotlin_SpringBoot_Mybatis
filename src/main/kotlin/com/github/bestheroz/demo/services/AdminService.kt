@@ -106,7 +106,7 @@ class AdminService(
 
             adminLoginIdDeferred.await().ifPresent {
                 adminDeferred.cancel()
-                BadRequest400Exception(ExceptionCode.ALREADY_JOINED_ACCOUNT)
+                throw BadRequest400Exception(ExceptionCode.ALREADY_JOINED_ACCOUNT)
             }
 
             adminDeferred
