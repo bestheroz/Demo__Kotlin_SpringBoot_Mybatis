@@ -52,8 +52,11 @@ class ApiExceptionHandler {
     fun authenticationException401(e: Unauthorized401Exception): ResponseEntity<ApiResult<*>> {
         log.warn(LogUtils.getStackTrace(e))
         val builder: ResponseEntity.BodyBuilder = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        if (e.exceptionCode == ExceptionCode.EXPIRED_TOKEN) {
-            builder.header("token", "must-renew")
+        when (e.exceptionCode) {
+            ExceptionCode.EXPIRED_TOKEN -> builder.header("token", "must-renew")
+            ExceptionCode.MISSING_AUTHENTICATION ->
+                log.error("@CurrentUser annotation used without proper authentication")
+            else -> {}
         }
         return builder.body(of(e.exceptionCode, e.data))
     }
@@ -108,12 +111,16 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun methodArgumentNotValidException(e: Throwable): ResponseEntity<ApiResult<*>> {
-        log.error(LogUtils.getStackTrace(e))
-        log.error("@CurrentUser 코드 누락됨")
+    fun methodArgumentNotValidException(
+        e: MethodArgumentNotValidException,
+    ): ResponseEntity<ApiResult<*>> {
+        log.warn(LogUtils.getStackTrace(e))
+        val errors =
+            e.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
+        log.warn("Validation failed: $errors")
         return ResponseEntity
-            .internalServerError()
-            .body(of(ExceptionCode.UNKNOWN_SYSTEM_ERROR, "@CurrentUser 코드 누락됨"))
+            .status(HttpStatus.BAD_REQUEST)
+            .body(of(ExceptionCode.INVALID_PARAMETER, errors))
     }
 
     @ExceptionHandler(
