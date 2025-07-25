@@ -7,7 +7,7 @@ plugins {
     id("com.google.devtools.ksp") version "2.2.20-Beta1-2.0.2"
     id("org.springframework.boot") version "3.5.3"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "7.1.0"
+    id("com.diffplug.spotless") version "7.2.1"
     id("com.github.ben-manes.versions") version "0.52.0"
     idea
 }
@@ -52,11 +52,11 @@ dependencies {
 
     // Database
     implementation("com.mysql:mysql-connector-j:9.3.0")
-    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.11.0")
+    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.12.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.0.6.Final")
+    implementation("org.hibernate.orm:hibernate-core:7.0.7.Final")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
@@ -87,7 +87,7 @@ tasks.bootJar {
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
         ktfmt("0.56").googleStyle()
-        ktlint("1.7.0").editorConfigOverride(
+        ktlint("1.7.1").editorConfigOverride(
             mapOf(
                 "ktlint_code_style" to "ktlint_official",
                 "ktlint_standard_no-wildcard-imports" to "disabled",
@@ -97,7 +97,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     }
 
     kotlinGradle {
-        ktlint("1.7.0")
+        ktlint("1.7.1")
     }
 }
 
