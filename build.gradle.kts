@@ -4,8 +4,8 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
 
-    id("com.google.devtools.ksp") version "2.2.20-Beta1-2.0.2"
-    id("org.springframework.boot") version "3.5.3"
+    id("com.google.devtools.ksp") version "2.2.20-Beta2-2.0.2"
+    id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.diffplug.spotless") version "7.2.1"
     id("com.github.ben-manes.versions") version "0.52.0"
@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.3")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.4")
     }
 }
 
@@ -51,17 +51,17 @@ dependencies {
     implementation("org.apache.commons:commons-lang3")
 
     // Database
-    implementation("com.mysql:mysql-connector-j:9.3.0")
+    implementation("com.mysql:mysql-connector-j:9.4.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.12.0")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.0.7.Final")
+    implementation("org.hibernate.orm:hibernate-core:7.1.0.Final")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.17.0")
-    implementation("io.sentry:sentry-logback:8.17.0")
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.18.0")
+    implementation("io.sentry:sentry-logback:8.18.0")
 
     // OpenAPI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
