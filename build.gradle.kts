@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "2.2.20-Beta1"
+    val kotlinVersion = "2.2.20-Beta2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
