@@ -50,6 +50,6 @@ Kotlin + Spring Boot + MyBatis를 사용한 데모 애플리케이션으로, 관
 
 ## 개발 환경 설정
 - Java 21 사용
-- Kotlin 2.2.20-Beta1
-- Spring Boot 3.5.4
+- Kotlin 2.2.20-RC
+- Spring Boot 3.5.5
 - 프로필별 설정: local, sandbox, qa, prod
