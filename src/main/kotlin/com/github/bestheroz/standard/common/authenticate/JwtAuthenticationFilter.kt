@@ -1,7 +1,7 @@
 package com.github.bestheroz.standard.common.authenticate
 
-import com.github.bestheroz.standard.common.log.logger
 import com.github.bestheroz.standard.config.SecurityConfig
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -22,12 +22,7 @@ import java.io.IOException
 class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider,
 ) : OncePerRequestFilter() {
-    companion object {
-        private const val REQUEST_COMPLETE_EXECUTE_TIME =
-            "{} ....... Request Complete Execute Time ....... : {}"
-        private const val REQUEST_PARAMETERS = "<{}>{}?{}"
-        private val log = logger()
-    }
+    private val logger = KotlinLogging.logger {}
 
     // AntPathMatcher를 한 개만 생성해두고 재사용
     private val pathMatcher = AntPathMatcher()
@@ -51,12 +46,9 @@ class JwtAuthenticationFilter(
         }
 
         if (!requestURI.startsWith("/api/v1/health/")) {
-            log.info(
-                REQUEST_PARAMETERS,
-                request.method,
-                requestURI,
-                StringUtils.defaultString(request.queryString),
-            )
+            logger.info {
+                "<${request.method}>$requestURI?${StringUtils.defaultString(request.queryString)}"
+            }
         }
 
         val stopWatch = StopWatch()
@@ -70,13 +62,13 @@ class JwtAuthenticationFilter(
 
             val token = jwtTokenProvider.resolveAccessToken(request)
             if (token == null) {
-                log.info("No access token found")
+                logger.info { "No access token found" }
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
                 return
             }
 
             if (!jwtTokenProvider.validateToken(token)) {
-                log.info("Invalid access token - refresh token required")
+                logger.info { "Invalid access token - refresh token required" }
                 response.status = HttpServletResponse.SC_UNAUTHORIZED
                 return
             }
@@ -89,7 +81,7 @@ class JwtAuthenticationFilter(
         } finally {
             stopWatch.stop()
             if (!requestURI.startsWith("/api/v1/health/")) {
-                log.info(REQUEST_COMPLETE_EXECUTE_TIME, requestURI, stopWatch)
+                logger.info { "$requestURI ....... Request Complete Execute Time ....... : $stopWatch" }
             }
         }
     }

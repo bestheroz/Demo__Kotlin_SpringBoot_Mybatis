@@ -10,10 +10,10 @@ import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.exception.BadRequest400Exception
 import com.github.bestheroz.standard.common.exception.ExceptionCode
 import com.github.bestheroz.standard.common.exception.Unauthorized401Exception
-import com.github.bestheroz.standard.common.log.logger
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.LogUtils
 import com.github.bestheroz.standard.common.util.PasswordUtil.isPasswordValid
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -29,7 +29,7 @@ class AdminService(
     private val operatorHelper: OperatorHelper,
 ) {
     companion object {
-        private val log = logger()
+        private val logger = KotlinLogging.logger {}
     }
 
     suspend fun getAdminList(request: AdminDto.Request): ListResult<AdminDto.Response> =
@@ -163,7 +163,7 @@ class AdminService(
                 it.password
                     ?.takeUnless { password -> isPasswordValid(request.oldPassword, password) }
                     ?.let {
-                        log.warn("password not match")
+                        logger.warn { "password not match" }
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
                 it.password
@@ -185,7 +185,7 @@ class AdminService(
                 it.password
                     ?.takeUnless { password -> isPasswordValid(request.password, password) }
                     ?.let {
-                        log.warn("password not match")
+                        logger.warn { "password not match" }
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
             }.let {
@@ -231,7 +231,7 @@ class AdminService(
                 withContext(Dispatchers.IO) { adminRepository.updateById(admin, id) }
             }
         } catch (e: Exception) {
-            log.warn(LogUtils.getStackTrace(e))
+            logger.warn { LogUtils.getStackTrace(e) }
         }
     }
 

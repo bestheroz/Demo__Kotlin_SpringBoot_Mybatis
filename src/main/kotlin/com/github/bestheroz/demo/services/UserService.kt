@@ -10,10 +10,10 @@ import com.github.bestheroz.standard.common.enums.UserTypeEnum
 import com.github.bestheroz.standard.common.exception.BadRequest400Exception
 import com.github.bestheroz.standard.common.exception.ExceptionCode
 import com.github.bestheroz.standard.common.exception.Unauthorized401Exception
-import com.github.bestheroz.standard.common.log.logger
 import com.github.bestheroz.standard.common.security.Operator
 import com.github.bestheroz.standard.common.util.LogUtils
 import com.github.bestheroz.standard.common.util.PasswordUtil.isPasswordValid
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +26,7 @@ class UserService(
     private val operatorHelper: OperatorHelper,
 ) {
     companion object {
-        private val log = logger()
+        private val logger = KotlinLogging.logger {}
     }
 
     suspend fun getUserList(request: UserDto.Request): ListResult<UserDto.Response> =
@@ -154,7 +154,7 @@ class UserService(
                 it.password
                     ?.takeUnless { password -> isPasswordValid(request.oldPassword, password) }
                     ?.let {
-                        log.warn("password not match")
+                        logger.warn { "password not match" }
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
                 it.password
@@ -176,7 +176,7 @@ class UserService(
                 it.password
                     ?.takeUnless { password -> isPasswordValid(request.password, password) }
                     ?.let {
-                        log.warn("password not match")
+                        logger.warn { "password not match" }
                         throw BadRequest400Exception(ExceptionCode.INVALID_PASSWORD)
                     }
             }.let {
@@ -221,7 +221,7 @@ class UserService(
                 withContext(Dispatchers.IO) { userRepository.updateById(user, id) }
             }
         } catch (e: Exception) {
-            log.warn(LogUtils.getStackTrace(e))
+            logger.warn { LogUtils.getStackTrace(e) }
         }
     }
 

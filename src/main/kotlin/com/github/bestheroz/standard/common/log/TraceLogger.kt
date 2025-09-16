@@ -1,6 +1,7 @@
 package com.github.bestheroz.standard.common.log
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.commons.lang3.StringUtils
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -14,11 +15,7 @@ class TraceLogger(
     private val objectMapper: ObjectMapper,
 ) {
     companion object {
-        private val log = logger()
-        private const val STR_START_EXECUTE_TIME = "{} START ......."
-        private const val STR_END_EXECUTE_TIME = "{} E N D [{}ms] - return: {}"
-        private const val STR_END_EXECUTE_TIME_FOR_REPOSITORY = "{} E N D [{}ms]"
-        private const val STR_END_EXECUTE_TIME_FOR_EXCEPTION = "{} THROW [{}ms]"
+        private val logger = KotlinLogging.logger {}
     }
 
     @Around(
@@ -43,25 +40,24 @@ class TraceLogger(
         stopWatch.start()
 
         return try {
-            log.info(STR_START_EXECUTE_TIME, signature)
+            logger.info { "$signature START ......." }
 
             val retVal = pjp.proceed()
             stopWatch.stop()
 
             when {
                 signature.containsAny("Repository.", "RepositoryCustom.", ".domain.") -> {
-                    log.info(STR_END_EXECUTE_TIME_FOR_REPOSITORY, signature, stopWatch.totalTimeMillis)
+                    logger.info { "$signature E N D [${stopWatch.totalTimeMillis}ms]" }
                 }
                 else -> {
-                    log.info(
-                        STR_END_EXECUTE_TIME,
-                        signature,
-                        stopWatch.totalTimeMillis,
-                        retVal?.run {
-                            val str = objectMapper.writeValueAsString(retVal)
-                            str.abbreviate(1000, "--skip massive text-- total length : ${str.length}")
-                        } ?: "null",
-                    )
+                    logger.info {
+                        val returnValue =
+                            retVal?.run {
+                                val str = objectMapper.writeValueAsString(retVal)
+                                str.abbreviate(1000, "--skip massive text-- total length : ${str.length}")
+                            } ?: "null"
+                        "$signature E N D [${stopWatch.totalTimeMillis}ms] - return: $returnValue"
+                    }
                 }
             }
 
@@ -70,7 +66,7 @@ class TraceLogger(
             if (stopWatch.isRunning) {
                 stopWatch.stop()
             }
-            log.info(STR_END_EXECUTE_TIME_FOR_EXCEPTION, signature, stopWatch.totalTimeMillis)
+            logger.info { "$signature THROW [${stopWatch.totalTimeMillis}ms]" }
             throw e
         }
     }
