@@ -5,10 +5,10 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
 
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-    id("org.springframework.boot") version "3.5.5"
+    id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "7.2.1"
-    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.diffplug.spotless") version "8.0.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
     idea
 }
 
@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.5")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.5.6")
     }
 }
 
@@ -35,7 +35,7 @@ dependencies {
     implementation(kotlin("noarg"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    ksp("com.google.dagger:dagger-compiler:2.57.1")
+    ksp("com.google.dagger:dagger-compiler:2.57.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
@@ -55,13 +55,13 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.1.0.Final")
+    implementation("org.hibernate.orm:hibernate-core:7.1.2.Final")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.21.1")
-    implementation("io.sentry:sentry-logback:8.21.1")
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:8.23.0")
+    implementation("io.sentry:sentry-logback:8.23.0")
 
     // OpenAPI (UI includes API dependency)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
