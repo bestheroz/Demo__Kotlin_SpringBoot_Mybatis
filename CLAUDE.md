@@ -53,3 +53,30 @@ Kotlin + Spring Boot + MyBatis를 사용한 데모 애플리케이션으로, 관
 - Kotlin 2.2.20-RC
 - Spring Boot 3.5.5
 - 프로필별 설정: local, sandbox, qa, prod
+
+## 트랜잭션 경계 설정
+- **Service 레이어**에 `@Transactional` 적용
+  - 기본값: `@Transactional(readOnly = true)` (클래스 레벨)
+  - 쓰기 작업: `@Transactional` (메서드 레벨)
+- **Controller 레이어**는 트랜잭션 없음
+- **Repository 레이어**는 데이터 접근만 담당 (트랜잭션 없음)
+
+## 비동기 처리
+- Kotlin Coroutines 사용 (`suspend` 함수)
+- Service 메서드는 `suspend` 함수로 정의
+- Controller에서 `runBlocking`으로 코루틴 실행
+- I/O 작업은 `withContext(Dispatchers.IO)` 사용
+- 병렬 처리가 필요한 경우 `async`/`await` 활용
+
+## MyBatis Repository 패턴
+- `io.github.bestheroz:mybatis-repository` 라이브러리 사용
+- Repository 인터페이스는 `SimpleRepository<T>` 상속
+- XML 매퍼 파일 없이 기본 CRUD 메서드 제공:
+  - `getItemById()`, `getItemByMap()`, `getItemsByMapOrderByLimitOffset()`
+  - `insert()`, `updateById()`, `deleteById()`
+  - `countByMap()`
+- 복잡한 쿼리는 XML 매퍼 파일로 확장 가능
+
+## API 문서 접근
+- Swagger UI: `http://localhost:8000/swagger-ui.html` (local 프로필에서만)
+- OpenAPI Spec: `http://localhost:8000/v3/api-docs`
