@@ -49,6 +49,7 @@ class TraceLogger(
                 signature.containsAny("Repository.", "RepositoryCustom.", ".domain.") -> {
                     logger.info { "$signature E N D [${stopWatch.totalTimeMillis}ms]" }
                 }
+
                 else -> {
                     logger.info {
                         val returnValue =
