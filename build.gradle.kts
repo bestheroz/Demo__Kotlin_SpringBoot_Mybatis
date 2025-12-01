@@ -55,13 +55,13 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.2.0.CR2")
+    implementation("org.hibernate.orm:hibernate-core:7.2.0.CR3")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("io.sentry:sentry-spring-boot-4:8.26.0")
-    implementation("io.sentry:sentry-logback:8.26.0")
+    implementation("io.sentry:sentry-spring-boot-4:8.27.1")
+    implementation("io.sentry:sentry-logback:8.27.1")
 
     // OpenAPI (UI includes API dependency)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
