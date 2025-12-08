@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "2.3.0-RC"
+    val kotlinVersion = "2.3.0-RC2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -52,7 +52,7 @@ dependencies {
     // Database
     implementation("com.mysql:mysql-connector-j:9.5.0")
     implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:2.0.0")
-    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5")
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
     implementation("org.hibernate.orm:hibernate-core:7.2.0.CR3")
@@ -60,8 +60,8 @@ dependencies {
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("io.sentry:sentry-spring-boot-4:8.27.1")
-    implementation("io.sentry:sentry-logback:8.27.1")
+    implementation("io.sentry:sentry-spring-boot-4:8.28.0")
+    implementation("io.sentry:sentry-logback:8.28.0")
 
     // OpenAPI (UI includes API dependency)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
