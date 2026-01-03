@@ -49,9 +49,9 @@ Kotlin + Spring Boot + MyBatis를 사용한 데모 애플리케이션으로, 관
 - **Exception Handler**: `ApiExceptionHandler.kt`에서 전역 예외 처리
 
 ## 개발 환경 설정
-- Java 21 사용
-- Kotlin 2.2.20-RC
-- Spring Boot 3.5.5
+- Java 25 사용
+- Kotlin 2.3.0
+- Spring Boot 4.0.1
 - 프로필별 설정: local, sandbox, qa, prod
 
 ## 트랜잭션 경계 설정
