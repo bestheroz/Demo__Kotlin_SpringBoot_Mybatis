@@ -38,7 +38,7 @@ class MyBatisConfig {
         )
 
         sessionFactory.setConfiguration(configuration)
-        return sessionFactory.`object`!!
+        return checkNotNull(sessionFactory.`object`)
     }
 
     @Bean
