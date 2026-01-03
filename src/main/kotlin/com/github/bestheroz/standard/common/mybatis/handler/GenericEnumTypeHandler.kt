@@ -50,7 +50,7 @@ class GenericEnumTypeHandler<E : ValueEnum>(
             return null
         }
         return try {
-            for (enumConstant in type!!.enumConstants) {
+            for (enumConstant in checkNotNull(type).enumConstants) {
                 if (enumConstant.value == value) {
                     return enumConstant
                 }

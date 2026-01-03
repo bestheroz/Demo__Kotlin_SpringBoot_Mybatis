@@ -190,7 +190,9 @@ class AdminService(
                     }
             }.let {
                 it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
-                withContext(Dispatchers.IO) { adminRepository.updateById(it, it.id!!) }
+                withContext(Dispatchers.IO) {
+                    adminRepository.updateById(it, checkNotNull(it.id) { "Admin ID must not be null" })
+                }
                 operatorHelper.fulfilOperator(it)
             }.let { TokenDto(jwtTokenProvider.createAccessToken(Operator(it)), it.token ?: "") }
 
@@ -207,7 +209,9 @@ class AdminService(
                 it.token?.let { token ->
                     if (token == refreshToken) {
                         it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
-                        withContext(Dispatchers.IO) { adminRepository.updateById(it, it.id!!) }
+                        withContext(Dispatchers.IO) {
+                            adminRepository.updateById(it, checkNotNull(it.id) { "Admin ID must not be null" })
+                        }
                     }
                 }
                 it

@@ -181,7 +181,9 @@ class UserService(
                     }
             }.let {
                 it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
-                withContext(Dispatchers.IO) { userRepository.updateById(it, it.id!!) }
+                withContext(Dispatchers.IO) {
+                    userRepository.updateById(it, checkNotNull(it.id) { "User ID must not be null" })
+                }
                 operatorHelper.fulfilOperator(it)
             }.let { TokenDto(jwtTokenProvider.createAccessToken(Operator(it)), it.token ?: "") }
 
@@ -197,7 +199,9 @@ class UserService(
                 it.token?.let { token ->
                     if (token == refreshToken) {
                         it.renewToken(jwtTokenProvider.createRefreshToken(Operator(it)))
-                        withContext(Dispatchers.IO) { userRepository.updateById(it, it.id!!) }
+                        withContext(Dispatchers.IO) {
+                            userRepository.updateById(it, checkNotNull(it.id) { "User ID must not be null" })
+                        }
                     }
                 }
                 it

@@ -95,7 +95,7 @@ class OperatorHelper(
         } else {
             adminRepository
                 .getTargetItemsByMap(setOf("id", "loginId", "name"), mapOf("id:in" to adminIds))
-                .associateBy { it.id!! }
+                .associateBy { checkNotNull(it.id) { "Admin ID must not be null" } }
         }
 
     private fun fetchUserMap(userIds: Set<Long>): Map<Long, User> =
@@ -104,7 +104,7 @@ class OperatorHelper(
         } else {
             userRepository
                 .getTargetItemsByMap(setOf("id", "loginId", "name"), mapOf("id:in" to userIds))
-                .associateBy { it.id!! }
+                .associateBy { checkNotNull(it.id) { "User ID must not be null" } }
         }
 
     private fun setOperatorData(
