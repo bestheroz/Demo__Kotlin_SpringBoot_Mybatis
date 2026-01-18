@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "2.3.0"
+    val kotlinVersion = "2.3.20-Beta1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -35,7 +35,7 @@ dependencies {
     implementation(kotlin("noarg"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    ksp("com.google.dagger:dagger-compiler:2.57.2")
+    ksp("com.google.dagger:dagger-compiler:2.58")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
@@ -55,13 +55,13 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-    implementation("org.hibernate.orm:hibernate-core:7.2.0.Final")
+    implementation("org.hibernate.orm:hibernate-core:7.2.1.Final")
 
     // Logging and Sentry
     implementation("com.auth0:java-jwt:4.5.0")
-    implementation("io.github.oshai:kotlin-logging-jvm:7.0.14")
-    implementation("io.sentry:sentry-spring-boot-4:8.29.0")
-    implementation("io.sentry:sentry-logback:8.29.0")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.00-beta-04")
+    implementation("io.sentry:sentry-spring-boot-4:8.30.0")
+    implementation("io.sentry:sentry-logback:8.30.0")
 
     // OpenAPI (UI includes API dependency)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
