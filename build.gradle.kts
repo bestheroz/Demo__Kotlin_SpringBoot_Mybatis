@@ -85,7 +85,6 @@ tasks.bootJar {
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
-        ktfmt("0.61").googleStyle()
         ktlint("1.8.0").editorConfigOverride(
             mapOf(
                 "ktlint_code_style" to "ktlint_official",
