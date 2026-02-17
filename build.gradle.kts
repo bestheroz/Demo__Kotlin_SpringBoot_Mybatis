@@ -35,7 +35,7 @@ dependencies {
     implementation(kotlin("noarg"))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    ksp("com.google.dagger:dagger-compiler:2.59")
+    ksp("com.google.dagger:dagger-compiler:2.59.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
@@ -55,13 +55,13 @@ dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
     implementation("jakarta.persistence:jakarta.persistence-api:4.0.0-M1")
-    implementation("org.hibernate.orm:hibernate-core:7.3.0.CR1")
+    implementation("org.hibernate.orm:hibernate-core:8.0.0.Alpha1")
 
     // Logging and Sentry
-    implementation("com.auth0:java-jwt:4.5.0")
-    implementation("io.github.oshai:kotlin-logging-jvm:8.0.00-beta-04")
-    implementation("io.sentry:sentry-spring-boot-4:8.31.0")
-    implementation("io.sentry:sentry-logback:8.31.0")
+    implementation("com.auth0:java-jwt:4.5.1")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
+    implementation("io.sentry:sentry-spring-boot-4:8.32.0")
+    implementation("io.sentry:sentry-logback:8.32.0")
 
     // OpenAPI (UI includes API dependency)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
