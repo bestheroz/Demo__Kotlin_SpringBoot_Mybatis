@@ -12,13 +12,6 @@ spring:
     resources:
       chain:
         compressed: true
-  jpa:
-    properties:
-      hibernate:
-        jdbc:
-          time_zone: UTC
-        default_batch_fetch_size: 1000
-    open-in-view: false
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false

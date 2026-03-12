@@ -2,7 +2,6 @@ plugins {
     val kotlinVersion = "2.3.20-RC3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
-    kotlin("plugin.jpa") version kotlinVersion
 
     id("com.google.devtools.ksp") version "2.3.6"
     id("org.springframework.boot") version "4.1.0-M2"
@@ -44,7 +43,6 @@ dependencies {
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.aspectj:aspectjweaver")
     implementation("org.apache.commons:commons-lang3")
