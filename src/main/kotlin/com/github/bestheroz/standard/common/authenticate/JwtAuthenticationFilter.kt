@@ -6,24 +6,23 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.StopWatch
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import org.springframework.util.AntPathMatcher
+import org.springframework.util.StopWatch
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.UrlPathHelper
 import java.io.IOException
+
+private val logger = KotlinLogging.logger {}
 
 @Component
 class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider,
 ) : OncePerRequestFilter() {
-    private val logger = KotlinLogging.logger {}
-
     // AntPathMatcher를 한 개만 생성해두고 재사용
     private val pathMatcher = AntPathMatcher()
 
@@ -47,7 +46,7 @@ class JwtAuthenticationFilter(
 
         if (!requestURI.startsWith("/api/v1/health/")) {
             logger.info {
-                "<${request.method}>$requestURI?${StringUtils.defaultString(request.queryString)}"
+                "<${request.method}>$requestURI?${(request.queryString ?: "")}"
             }
         }
 
@@ -79,9 +78,11 @@ class JwtAuthenticationFilter(
 
             filterChain.doFilter(request, response)
         } finally {
-            stopWatch.stop()
+            if (stopWatch.isRunning) {
+                stopWatch.stop()
+            }
             if (!requestURI.startsWith("/api/v1/health/")) {
-                logger.info { "$requestURI ....... Request Complete Execute Time ....... : $stopWatch" }
+                logger.info { "$requestURI ....... Request Complete Execute Time ....... : ${stopWatch.totalTimeMillis}ms" }
             }
         }
     }

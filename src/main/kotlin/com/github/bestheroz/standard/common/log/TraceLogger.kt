@@ -2,7 +2,6 @@ package com.github.bestheroz.standard.common.log
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.apache.commons.lang3.StringUtils
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -72,10 +71,13 @@ class TraceLogger(
         }
     }
 
-    private fun String.containsAny(vararg substrings: String): Boolean = StringUtils.containsAny(this, *substrings)
+    private fun String.containsAny(vararg substrings: String): Boolean = substrings.any { this.contains(it) }
 
     private fun String?.abbreviate(
         maxWidth: Int,
         abbrevMarker: String,
-    ): String = StringUtils.abbreviate(this ?: "null", abbrevMarker, maxWidth)
+    ): String {
+        val str = this ?: "null"
+        return if (str.length <= maxWidth) str else str.take(maxWidth) + abbrevMarker
+    }
 }
