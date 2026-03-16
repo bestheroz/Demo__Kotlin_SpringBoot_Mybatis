@@ -12,9 +12,6 @@ spring:
     resources:
       chain:
         compressed: true
-  jackson:
-    serialization:
-      FAIL_ON_EMPTY_BEANS: false
 springdoc:
   api-docs:
     enabled: false
