@@ -75,7 +75,8 @@
       "Bash(./gradlew build:*)",
       "Bash(./gradlew clean:*)",
       "Bash(./gradlew spotlessApply build 2>&1)",
-      "Bash(./gradlew spotlessApply 2>&1 && ./gradlew build -x test 2>&1)"
+      "Bash(./gradlew spotlessApply 2>&1 && ./gradlew build -x test 2>&1)",
+      "Bash(./gradlew dependencies:*)"
     ],
     "deny": [
       "Bash(git push:*)",
