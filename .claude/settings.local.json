@@ -76,7 +76,10 @@
       "Bash(./gradlew clean:*)",
       "Bash(./gradlew spotlessApply build 2>&1)",
       "Bash(./gradlew spotlessApply 2>&1 && ./gradlew build -x test 2>&1)",
-      "Bash(./gradlew dependencies:*)"
+      "Bash(./gradlew dependencies:*)",
+      "Bash(./gradlew --version)",
+      "mcp__plugin_oh-my-claudecode_t__state_list_active",
+      "mcp__plugin_oh-my-claudecode_t__state_clear"
     ],
     "deny": [
       "Bash(git push:*)",
@@ -97,5 +100,11 @@
       "ShellMonitor",
       "Bash(npx serverless deploy:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "exa",
+    "filesystem",
+    "github"
+  ]
 }

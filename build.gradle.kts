@@ -1,12 +1,12 @@
 plugins {
-    val kotlinVersion = "2.3.20-RC3"
+    val kotlinVersion = "2.4.0-RC"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
 
-    id("org.springframework.boot") version "4.1.0-M3"
+    id("org.springframework.boot") version "4.1.0-RC1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "8.4.0"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.diffplug.spotless") version "8.5.1"
+    id("com.github.ben-manes.versions") version "0.54.0"
     idea
 }
 
@@ -30,8 +30,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     // Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -39,21 +39,21 @@ dependencies {
     implementation("org.aspectj:aspectjweaver")
 
     // Database
-    implementation("com.mysql:mysql-connector-j:9.6.0")
-    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:2.0.0")
+    implementation("com.mysql:mysql-connector-j:9.7.0")
+    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:2.0.1")
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
     implementation("io.github.bestheroz:mybatis-repository:0.8.1")
-    implementation("jakarta.persistence:jakarta.persistence-api:4.0.0-M1")
+    implementation("jakarta.persistence:jakarta.persistence-api:4.0.0-M4")
     implementation("org.hibernate.orm:hibernate-core:8.0.0.Alpha1")
 
     // Logging and Sentry
-    implementation("com.auth0:java-jwt:4.5.1")
-    implementation("io.github.oshai:kotlin-logging-jvm:8.0.01")
-    implementation("io.sentry:sentry-spring-boot-4:8.36.0")
-    implementation("io.sentry:sentry-logback:8.36.0")
+    implementation("com.auth0:java-jwt:4.5.2")
+    implementation("io.github.oshai:kotlin-logging-jvm:8.0.03")
+    implementation("io.sentry:sentry-spring-boot-4:8.42.0")
+    implementation("io.sentry:sentry-logback:8.42.0")
 
     // OpenAPI (UI includes API dependency)
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
 }
 
 kotlin {
