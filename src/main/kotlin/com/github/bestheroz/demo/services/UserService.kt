@@ -220,9 +220,8 @@ class UserService(
             val optionalUser = withContext(Dispatchers.IO) { userRepository.getItemById(id) }
 
             if (optionalUser.isPresent) {
-                val user = optionalUser.get()
-                user.logout()
-                withContext(Dispatchers.IO) { userRepository.updateById(user, id) }
+                // 엔티티 경로(updateById)는 null 필드를 SET 에서 빼므로 token 을 NULL 로 비우려면 맵 경로를 쓴다.
+                withContext(Dispatchers.IO) { userRepository.updateMapById(hashMapOf<String, Any?>("token" to null), id) }
             }
         } catch (e: Exception) {
             logger.warn { LogUtils.getStackTrace(e) }

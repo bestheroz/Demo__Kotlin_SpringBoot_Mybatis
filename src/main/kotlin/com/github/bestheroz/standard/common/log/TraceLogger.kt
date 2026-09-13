@@ -45,7 +45,9 @@ class TraceLogger(
             stopWatch.stop()
 
             when {
-                signature.containsAny("Repository.", "RepositoryCustom.", ".domain.") -> {
+                // mybatis-repository 0.10.0 부터 기본 메서드가 MybatisRepositoryBase 에 선언되어 signature 가 "RepositoryBase." 로 찍힌다.
+                // 이를 놓치면 작성자 정보가 채워지기 전 엔티티를 직렬화하다 예외가 나므로 함께 건너뛴다.
+                signature.containsAny("Repository.", "RepositoryBase.", "RepositoryCustom.", ".domain.") -> {
                     logger.info { "$signature E N D [${stopWatch.totalTimeMillis}ms]" }
                 }
 

@@ -101,8 +101,4 @@ data class Admin(
         this.token = token
         latestActiveAt = Instant.now()
     }
-
-    fun logout() {
-        token = null
-    }
 }

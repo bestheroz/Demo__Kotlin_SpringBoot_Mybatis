@@ -98,8 +98,4 @@ data class User(
         this.token = token
         this.latestActiveAt = Instant.now()
     }
-
-    fun logout() {
-        this.token = null
-    }
 }
