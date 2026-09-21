@@ -96,3 +96,25 @@ Kotlin + Spring Boot + MyBatis를 사용한 데모 애플리케이션으로, 관
 ## API 문서 접근
 - Swagger UI: `http://localhost:8000/swagger-ui.html` (local 프로필에서만)
 - OpenAPI Spec: `http://localhost:8000/v3/api-docs`
+
+## CLAUDE.md 관리 규칙
+- 이 파일은 200줄 이하 유지. 매 세션 필요한 내용만 둔다: 빌드/테스트 명령, 전역 컨벤션, 도메인 간 의존 규칙, 함정과 그 이유
+- 코드에서 유추 가능한 내용(디렉터리 구조, 의존성 목록, 아키텍처 개요)은 쓰지 않는다
+- 지시는 검증 가능한 수준으로 구체적으로 쓴다 (X "포맷 잘 맞춰라" / O "2-space 들여쓰기")
+- 특정 도메인/경로에만 해당하는 규칙은 이 파일에 넣지 않는다
+  - 도메인이 단일 폴더로 분리돼 있으면 → 해당 폴더의 CLAUDE.md
+  - 여러 폴더에 흩어져 있으면 → `.claude/rules/<topic>.md` + `paths` frontmatter
+  - 다단계 절차는 → 스킬
+- 하위 CLAUDE.md 와 rules 에는 루트 규칙을 재진술하지 않는다. 충돌/중복 발견 시 사용자에게 알린다
+- 도메인 규칙을 분리하면 아래 "도메인 인덱스"에 한 줄 추가한다
+- 지시 파일을 추가/수정할 때는 변경 전 사용자에게 위치와 내용을 먼저 제안한다
+
+## 도메인 인덱스
+<!-- 형식: `경로/` — 한 줄 설명, 규칙 파일 위치 -->
+<!-- 이 리포는 레이어 우선 구조라 도메인이 단일 폴더로 모이지 않는다. 도메인 규칙은 `.claude/rules/<domain>.md` + paths 로 작성한다. -->
+- `demo/**/Admin*` — 관리자 계정·로그인·토큰 재발급. 규칙 파일 없음
+- `demo/**/User*` — 일반 사용자 계정·로그인·토큰 재발급. 규칙 파일 없음
+- `demo/**/Notice*` — 공지 CRUD. 규칙 파일 없음
+- `standard/` — 인증, 예외 변환, 응답 포맷, MyBatis 확장 등 공통 프레임워크. 규칙 파일 없음
+- `migration/` — Flyway SQL 마이그레이션. 규칙 파일 없음
+- 지시 파일 자체(CLAUDE.md, rules) 작성 기준 — `.claude/rules/claude-md-maintenance.md`
